@@ -3,52 +3,106 @@
   <head>
     <meta charset="UTF-8" />
 
-    <!-- Favicons -->
+    <!-- ========== FAVICONS ========== -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-
-    <!-- Apple Touch Icon -->
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-
-    <!-- Android / PWA Icons -->
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="192x192"
-      href="/android-chrome-192x192.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="512x512"
-      href="/android-chrome-512x512.png"
-    />
-
-    <!-- Web App Manifest -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png" />
     <link rel="manifest" href="/site.webmanifest" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>The Cargo Grid — Logistics & Package Tracking</title>
-
+    <!-- ========== PRIMARY SEO ========== -->
+    <title>The Cargo Grid — International Logistics & Real‑Time Package Tracking</title>
     <meta
       name="description"
-      content="Track your shipment in real-time with The Cargo Grid. Reliable international logistics, package tracking, and delivery services."
+      content="Track your shipment in real‑time with The Cargo Grid. Reliable international logistics, UK & global shipping, customs clearance, and delivery services."
     />
+    <meta
+      name="keywords"
+      content="The Cargo Grid, logistics, package tracking, international shipping, UK delivery, freight, customs clearance, real‑time tracking, shipment tracking, courier, supply chain, cargo, parcel delivery"
+    />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://thecargogrid.com/" />
 
-    <!-- Google Fonts -->
+    <!-- ========== OPEN GRAPH (Facebook, LinkedIn, etc.) ========== -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="The Cargo Grid — International Logistics & Real‑Time Package Tracking" />
+    <meta
+      property="og:description"
+      content="Track your shipment in real‑time with The Cargo Grid. Reliable logistics, UK & global shipping, customs clearance, and delivery services."
+    />
+    <meta property="og:url" content="https://thecargogrid.com/" />
+    <!-- Use full absolute URL for social preview (replace with your domain) -->
+    <meta property="og:image" content="https://thecargogrid.com/hero-logistics.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="The Cargo Grid" />
+    <meta property="og:locale" content="en_GB" />
+
+    <!-- ========== TWITTER CARD ========== -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="The Cargo Grid — International Logistics & Real‑Time Package Tracking" />
+    <meta
+      name="twitter:description"
+      content="Track your shipment in real‑time with The Cargo Grid. Reliable logistics, UK & global shipping, customs clearance, and delivery services."
+    />
+    <meta name="twitter:image" content="https://thecargogrid.com/hero-logistics.jpg" />
+
+    <!-- ========== JSON‑LD STRUCTURED DATA ========== -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "The Cargo Grid",
+        "url": "https://thecargogrid.com/",
+        "logo": "https://thecargogrid.com/logo.png",
+        "description": "International logistics and real‑time package tracking services. Reliable shipping, customs clearance, and delivery across the UK and worldwide.",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+44-800-555-0199",
+          "contactType": "Customer Service",
+          "availableLanguage": ["English"]
+        },
+        "sameAs": [
+          "https://www.linkedin.com/company/thecargogrid",
+          "https://twitter.com/thecargogrid"
+        ]
+      }
+    </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "url": "https://thecargogrid.com/",
+        "name": "The Cargo Grid",
+        "description": "Track your shipment in real‑time with The Cargo Grid. Reliable international logistics, package tracking, and delivery services.",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://thecargogrid.com/track?tracking={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
+
+    <!-- ========== GOOGLE FONTS ========== -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
       rel="stylesheet"
     />
+
+    <!-- ========== PRELOAD HERO IMAGE FOR PERFORMANCE ========== -->
+    <link rel="preload" as="image" href="/hero-logistics.jpg" />
+
   </head>
 
   <body>
     <div id="root"></div>
-
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
