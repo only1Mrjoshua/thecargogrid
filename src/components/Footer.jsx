@@ -16,8 +16,6 @@ const footerLinks = {
     title: 'Tracking',
     links: [
       { label: 'Track Shipment', href: '/track' },
-      { label: 'Shipment Status', href: '/track' },
-      { label: 'Delivery Information', href: '/track' },
     ],
   },
   support: {
