@@ -5,57 +5,9 @@ import {
   Package, Calendar, AlertCircle, CheckCircle,
   File, FileCheck, FileWarning, Receipt, Truck
 } from 'lucide-react';
+import { publicApi } from '../api/publicApi';
 
-// ----- Mock document data per tracking number (TCG-12-digit) -----
-const mockDocuments = {
-  'TCG-123456789012': {
-    trackingNumber: 'TCG-123456789012',
-    origin: 'London, UK',
-    destination: 'Edinburgh, UK',
-    documents: [
-      { id: 1, name: 'Waybill', type: 'Waybill', date: '2026-08-01', size: '245 KB', required: true },
-      { id: 2, name: 'Commercial Invoice', type: 'Invoice', date: '2026-08-01', size: '1.2 MB', required: true },
-      { id: 3, name: 'Packing List', type: 'Packing List', date: '2026-08-01', size: '876 KB', required: false },
-      { id: 4, name: 'Delivery Confirmation', type: 'Delivery', date: '2026-08-08', size: '324 KB', required: false },
-    ]
-  },
-  'TCG-234567890123': {
-    trackingNumber: 'TCG-234567890123',
-    origin: 'Manchester, UK',
-    destination: 'Bristol, UK',
-    documents: [
-      { id: 1, name: 'Waybill', type: 'Waybill', date: '2026-07-28', size: '198 KB', required: true },
-      { id: 2, name: 'Packing List', type: 'Packing List', date: '2026-07-28', size: '654 KB', required: false },
-      { id: 3, name: 'Delivery Receipt', type: 'Receipt', date: '2026-08-02', size: '420 KB', required: false },
-      { id: 4, name: 'Proof of Delivery', type: 'Delivery', date: '2026-08-02', size: '1.8 MB', required: false },
-    ]
-  },
-  'TCG-345678901234': {
-    trackingNumber: 'TCG-345678901234',
-    origin: 'Glasgow, UK',
-    destination: 'London, UK',
-    documents: [
-      { id: 1, name: 'Commercial Invoice', type: 'Invoice', date: '2026-08-03', size: '2.1 MB', required: true },
-      { id: 2, name: 'Packing List', type: 'Packing List', date: '2026-08-03', size: '1.1 MB', required: true },
-      { id: 3, name: 'Customs Notice', type: 'Customs', date: '2026-08-06', size: '456 KB', required: true },
-      { id: 4, name: 'Inspection Document', type: 'Inspection', date: '2026-08-06', size: '789 KB', required: true },
-      { id: 5, name: 'Clearance Document', type: 'Clearance', date: '2026-08-07', size: '567 KB', required: false },
-      { id: 6, name: 'Payment Receipt', type: 'Receipt', date: '2026-08-07', size: '324 KB', required: false },
-    ]
-  },
-  'TCG-456789012345': {
-    trackingNumber: 'TCG-456789012345',
-    origin: 'Birmingham, UK',
-    destination: 'Liverpool, UK',
-    documents: [
-      { id: 1, name: 'Waybill', type: 'Waybill', date: '2026-08-04', size: '210 KB', required: true },
-      { id: 2, name: 'Packing List', type: 'Packing List', date: '2026-08-04', size: '890 KB', required: false },
-      { id: 3, name: 'Delivery Confirmation', type: 'Delivery', date: '2026-08-07', size: '312 KB', required: false },
-    ]
-  }
-};
-
-// Icon mapping for document types (unchanged)
+// Icon mapping for document types – unchanged
 const getDocIcon = (type) => {
   const map = {
     'Waybill': FileText,
@@ -78,21 +30,56 @@ function ShipmentDocumentsPage() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (tracking) {
-      setLoading(true);
-      setTimeout(() => {
-        const docData = mockDocuments[tracking.toUpperCase()];
-        if (docData) {
-          setData(docData);
-          setNotFound(false);
-        } else {
-          setData(null);
-          setNotFound(true);
+      const fetchShipment = async () => {
+        setLoading(true);
+        setError('');
+        setNotFound(false);
+        try {
+          const response = await publicApi.get(`/shipments/public/${tracking}`);
+          const shipment = response.data.shipment;
+
+          // Build document list from shipment.documents array
+          const docs = (shipment.documents || []).map(doc => ({
+            id: doc.id,
+            name: doc.name,
+            type: doc.type || 'Document',
+            date: doc.uploadDate || doc.date || '—',
+            size: doc.size || '—',
+            required: doc.required || false,
+            data: doc.data || '',
+          }));
+
+          if (docs.length === 0) {
+            // No documents – still show the page with empty state
+            setData({
+              trackingNumber: shipment.id || tracking,
+              origin: shipment.origin || '',
+              destination: shipment.destination || '',
+              documents: [],
+            });
+          } else {
+            setData({
+              trackingNumber: shipment.id || tracking,
+              origin: shipment.origin || '',
+              destination: shipment.destination || '',
+              documents: docs,
+            });
+          }
+        } catch (err) {
+          if (err.response?.status === 404) {
+            setNotFound(true);
+          } else {
+            setError('Failed to load documents.');
+          }
+        } finally {
+          setLoading(false);
         }
-        setLoading(false);
-      }, 300);
+      };
+      fetchShipment();
     } else {
       setNotFound(true);
       setLoading(false);
@@ -104,14 +91,33 @@ function ShipmentDocumentsPage() {
   const goToTrack = () => navigate('/track');
 
   const handleView = (doc) => {
-    alert(`Viewing document: ${doc.name} (demo)`);
+    // If the document has data (base64), open it in a new tab
+    if (doc.data) {
+      const win = window.open('', '_blank');
+      if (win) {
+        win.document.write(`<iframe src="${doc.data}" style="width:100%;height:100%;border:none;"></iframe>`);
+        win.document.title = doc.name;
+      }
+    } else {
+      alert(`Viewing document: ${doc.name} (demo)`);
+    }
   };
 
   const handleDownload = (doc) => {
-    alert(`Downloading ${doc.name} (demo)`);
+    if (doc.data) {
+      const link = document.createElement('a');
+      link.href = doc.data;
+      link.download = doc.name;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      alert(`Downloading ${doc.name} (demo)`);
+    }
   };
 
   const handlePrint = (doc) => {
+    // For demo, just show alert
     alert(`Printing ${doc.name} (demo)`);
   };
 
@@ -121,6 +127,19 @@ function ShipmentDocumentsPage() {
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-[#2B0071]/20 border-t-[#2B0071] rounded-full animate-spin mx-auto" />
           <p className="mt-4 text-gray-500">Loading documents...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#F8F9FD] pt-[72px] flex items-center justify-center">
+        <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-8 max-w-md text-center">
+          <AlertCircle size={48} className="text-[#EF4444] mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-[#1A1A2E] mb-2">Error</h3>
+          <p className="text-gray-500">{error}</p>
+          <button onClick={goToTrack} className="mt-6 btn-primary">Go to Track Page</button>
         </div>
       </div>
     );
@@ -175,73 +194,80 @@ function ShipmentDocumentsPage() {
           </div>
 
           {/* Document list */}
-          <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card overflow-hidden">
-            <div className="px-6 py-4 border-b border-[#E2E5F0] bg-[#F8F9FD]/50 flex items-center justify-between text-xs font-medium text-gray-500 uppercase tracking-wider">
-              <span className="flex-1">Document Name</span>
-              <span className="w-24 text-center hidden sm:block">Date</span>
-              <span className="w-20 text-center hidden md:block">Size</span>
-              <span className="w-40 text-right">Actions</span>
+          {data.documents.length === 0 ? (
+            <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-8 text-center">
+              <FileText size={48} className="text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-400">No documents uploaded for this shipment.</p>
             </div>
+          ) : (
+            <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card overflow-hidden">
+              <div className="px-6 py-4 border-b border-[#E2E5F0] bg-[#F8F9FD]/50 flex items-center justify-between text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <span className="flex-1">Document Name</span>
+                <span className="w-24 text-center hidden sm:block">Date</span>
+                <span className="w-20 text-center hidden md:block">Size</span>
+                <span className="w-40 text-right">Actions</span>
+              </div>
 
-            <div className="divide-y divide-[#E2E5F0]">
-              {data.documents.map((doc) => (
-                <div key={doc.id} className="px-6 py-4 flex flex-wrap items-center gap-3 hover:bg-[#F8F9FD]/30 transition-colors">
-                  {/* Document info */}
-                  <div className="flex-1 min-w-[140px] flex items-center gap-3">
-                    {getDocIcon(doc.type)}
-                    <div>
-                      <p className="text-sm font-medium text-[#1A1A2E]">{doc.name}</p>
-                      <p className="text-xs text-gray-400">{doc.type}</p>
+              <div className="divide-y divide-[#E2E5F0]">
+                {data.documents.map((doc) => (
+                  <div key={doc.id} className="px-6 py-4 flex flex-wrap items-center gap-3 hover:bg-[#F8F9FD]/30 transition-colors">
+                    {/* Document info */}
+                    <div className="flex-1 min-w-[140px] flex items-center gap-3">
+                      {getDocIcon(doc.type)}
+                      <div>
+                        <p className="text-sm font-medium text-[#1A1A2E]">{doc.name}</p>
+                        <p className="text-xs text-gray-400">{doc.type}</p>
+                      </div>
+                      {doc.required && (
+                        <span className="text-xs text-[#FF5500] bg-[#FF5500]/10 px-2 py-0.5 rounded-full">Required</span>
+                      )}
                     </div>
-                    {doc.required && (
-                      <span className="text-xs text-[#FF5500] bg-[#FF5500]/10 px-2 py-0.5 rounded-full">Required</span>
-                    )}
-                  </div>
 
-                  {/* Date */}
-                  <div className="w-24 text-center hidden sm:block text-sm text-gray-500">
-                    {doc.date}
-                  </div>
+                    {/* Date */}
+                    <div className="w-24 text-center hidden sm:block text-sm text-gray-500">
+                      {doc.date}
+                    </div>
 
-                  {/* Size */}
-                  <div className="w-20 text-center hidden md:block text-sm text-gray-400">
-                    {doc.size}
-                  </div>
+                    {/* Size */}
+                    <div className="w-20 text-center hidden md:block text-sm text-gray-400">
+                      {doc.size}
+                    </div>
 
-                  {/* Actions */}
-                  <div className="w-40 flex items-center justify-end gap-2 flex-nowrap">
-                    <button
-                      onClick={() => handleView(doc)}
-                      className="p-2 text-[#2B0071]/60 hover:text-[#2B0071] transition-colors rounded-lg hover:bg-[#2B0071]/5"
-                      aria-label={`View ${doc.name}`}
-                    >
-                      <Eye size={16} />
-                    </button>
-                    <button
-                      onClick={() => handleDownload(doc)}
-                      className="p-2 text-[#2B0071]/60 hover:text-[#2B0071] transition-colors rounded-lg hover:bg-[#2B0071]/5"
-                      aria-label={`Download ${doc.name}`}
-                    >
-                      <Download size={16} />
-                    </button>
-                    <button
-                      onClick={() => handlePrint(doc)}
-                      className="p-2 text-[#2B0071]/60 hover:text-[#2B0071] transition-colors rounded-lg hover:bg-[#2B0071]/5"
-                      aria-label={`Print ${doc.name}`}
-                    >
-                      <Printer size={16} />
-                    </button>
+                    {/* Actions */}
+                    <div className="w-40 flex items-center justify-end gap-2 flex-nowrap">
+                      <button
+                        onClick={() => handleView(doc)}
+                        className="p-2 text-[#2B0071]/60 hover:text-[#2B0071] transition-colors rounded-lg hover:bg-[#2B0071]/5"
+                        aria-label={`View ${doc.name}`}
+                      >
+                        <Eye size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDownload(doc)}
+                        className="p-2 text-[#2B0071]/60 hover:text-[#2B0071] transition-colors rounded-lg hover:bg-[#2B0071]/5"
+                        aria-label={`Download ${doc.name}`}
+                      >
+                        <Download size={16} />
+                      </button>
+                      <button
+                        onClick={() => handlePrint(doc)}
+                        className="p-2 text-[#2B0071]/60 hover:text-[#2B0071] transition-colors rounded-lg hover:bg-[#2B0071]/5"
+                        aria-label={`Print ${doc.name}`}
+                      >
+                        <Printer size={16} />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+
+              {/* Footer note */}
+              <div className="px-6 py-4 bg-[#F8F9FD]/30 border-t border-[#E2E5F0] text-xs text-gray-400 flex items-center gap-2">
+                <FileText size={14} />
+                <span>{data.documents.length} document(s) available</span>
+              </div>
             </div>
-
-            {/* Footer note */}
-            <div className="px-6 py-4 bg-[#F8F9FD]/30 border-t border-[#E2E5F0] text-xs text-gray-400 flex items-center gap-2">
-              <FileText size={14} />
-              <span>{data.documents.length} document(s) available</span>
-            </div>
-          </div>
+          )}
 
           {/* Additional info */}
           <div className="mt-6 text-center text-xs text-gray-400">
