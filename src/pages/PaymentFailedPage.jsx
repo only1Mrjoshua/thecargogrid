@@ -11,7 +11,7 @@ const mockFailedData = {
     trackingNumber: 'TCG-345678901234',
     transactionReference: 'TXN-2026-00842',
     amount: 35.00,
-    currency: 'GBP',
+    currency: 'USD',
     reason: 'Insufficient funds',
     timestamp: '2026-08-07 14:32:18',
     paymentMethod: 'Credit Card (•••• 4242)',

@@ -5,33 +5,38 @@ import {
   MapPin, Calendar, ArrowLeft, AlertCircle, CheckCircle,
   Info, Package
 } from 'lucide-react';
+import { publicApi } from '../api/publicApi';
 
-// ----- Mock data for customs hold shipments (TCG-12-digit format) -----
-const mockCustomsShipments = {
-  'TCG-345678901234': {
-    trackingNumber: 'TCG-345678901234',
-    status: 'customs_hold',
-    origin: 'Glasgow, UK',
-    destination: 'London, UK',
-    currentLocation: 'Customs Clearance Centre, London',
-    holdDate: '2026-08-06 10:15',
-    reason: 'Missing commercial invoice',
-    explanation: 'The shipment requires a detailed commercial invoice with correct HS codes and declared value. Without this, customs cannot process the release.',
-    instructions: 'Please provide the completed commercial invoice and proof of value. You can upload the document below or contact our support team for assistance.',
-    requiredDocuments: [
+// Helper to extract customs hold data from a shipment
+const extractCustomsData = (shipment) => {
+  // If shipment has customs hold status
+  const isCustomsHold = shipment.status === 'Customs Hold' || shipment.status === 'Customs Fee Pending';
+  if (!isCustomsHold) return null;
+
+  // Build customs data from shipment fields (fallback to defaults)
+  return {
+    trackingNumber: shipment.id || shipment.trackingNumber || '',
+    status: shipment.status,
+    origin: shipment.origin || '',
+    destination: shipment.destination || '',
+    currentLocation: shipment.currentLocation || shipment.location || 'Customs Clearance Centre',
+    holdDate: shipment.dateTime || shipment.date || new Date().toISOString().slice(0, 16),
+    reason: shipment.description || 'Customs processing required',
+    explanation: shipment.description || 'The shipment requires additional customs processing before it can continue.',
+    instructions: 'Please provide the required documents. You can upload them below or contact our support team for assistance.',
+    requiredDocuments: shipment.documents?.filter(d => d.required)?.map(d => ({ name: d.name, required: true, uploaded: false })) || [
       { name: 'Commercial Invoice', required: true, uploaded: false },
       { name: 'Packing List', required: true, uploaded: false },
-      { name: 'Proof of Value', required: false, uploaded: true },
     ],
-    fee: {
-      amount: 35.00,
-      currency: 'GBP',
+    fee: shipment.fees ? {
+      amount: shipment.fees.total || 0,
+      currency: shipment.fees.currency || 'USD',
       description: 'Customs processing fee',
-      paid: false
-    },
+      paid: shipment.fees.paid || false
+    } : null,
     contactSupport: true,
     nextSteps: 'Once documents are submitted and verified, the shipment will be released within 24 hours.'
-  },
+  };
 };
 
 function CustomsHoldPage() {
@@ -41,21 +46,36 @@ function CustomsHoldPage() {
   const [shipment, setShipment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (tracking) {
-      setLoading(true);
-      setTimeout(() => {
-        const data = mockCustomsShipments[tracking.toUpperCase()];
-        if (data) {
-          setShipment(data);
-          setNotFound(false);
-        } else {
-          setShipment(null);
-          setNotFound(true);
+      const fetchShipment = async () => {
+        setLoading(true);
+        setError('');
+        setNotFound(false);
+        try {
+          const response = await publicApi.get(`/shipments/public/${tracking}`);
+          const data = response.data.shipment;
+          // Check if it's a customs hold
+          if (data.status === 'Customs Hold' || data.status === 'Customs Fee Pending') {
+            setShipment(data);
+          } else {
+            // Not a customs hold – show error
+            setError('This shipment is not currently on customs hold.');
+            setNotFound(true);
+          }
+        } catch (err) {
+          if (err.response?.status === 404) {
+            setNotFound(true);
+          } else {
+            setError('Failed to load customs hold details.');
+          }
+        } finally {
+          setLoading(false);
         }
-        setLoading(false);
-      }, 300);
+      };
+      fetchShipment();
     } else {
       setNotFound(true);
       setLoading(false);
@@ -88,6 +108,19 @@ function CustomsHoldPage() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#F8F9FD] pt-[72px] flex items-center justify-center">
+        <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-8 max-w-md text-center">
+          <AlertCircle size={48} className="text-[#EF4444] mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-[#1A1A2E] mb-2">Not a customs hold</h3>
+          <p className="text-gray-500">{error}</p>
+          <button onClick={goToTrack} className="mt-6 btn-primary">Go to Track Page</button>
+        </div>
+      </div>
+    );
+  }
+
   if (notFound || !shipment) {
     return (
       <div className="min-h-screen bg-[#F8F9FD] pt-[72px] flex items-center justify-center">
@@ -95,6 +128,22 @@ function CustomsHoldPage() {
           <AlertCircle size={48} className="text-[#EF4444] mx-auto mb-4" />
           <h3 className="text-xl font-bold text-[#1A1A2E] mb-2">No customs hold found</h3>
           <p className="text-gray-500">We couldn't find any customs hold for tracking number <strong>{tracking}</strong>.</p>
+          <button onClick={goToTrack} className="mt-6 btn-primary">Go to Track Page</button>
+        </div>
+      </div>
+    );
+  }
+
+  // Extract customs data from the shipment
+  const customsData = extractCustomsData(shipment);
+  if (!customsData) {
+    // Fallback – should not happen because we already checked status
+    return (
+      <div className="min-h-screen bg-[#F8F9FD] pt-[72px] flex items-center justify-center">
+        <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-8 max-w-md text-center">
+          <AlertCircle size={48} className="text-[#EF4444] mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-[#1A1A2E] mb-2">Not a customs hold</h3>
+          <p className="text-gray-500">This shipment is not currently on customs hold.</p>
           <button onClick={goToTrack} className="mt-6 btn-primary">Go to Track Page</button>
         </div>
       </div>
@@ -130,7 +179,7 @@ function CustomsHoldPage() {
                     <span className="w-1.5 h-1.5 rounded-full bg-[#FF5500]" />
                     Held by Customs
                   </span>
-                  <span className="text-sm text-gray-400 font-mono">{shipment.trackingNumber}</span>
+                  <span className="text-sm text-gray-400 font-mono">{customsData.trackingNumber}</span>
                 </div>
               </div>
             </div>
@@ -147,27 +196,27 @@ function CustomsHoldPage() {
                 <div className="text-xs text-gray-500">Current Location</div>
                 <div className="font-medium flex items-center gap-1.5">
                   <MapPin size={14} className="text-[#FF5500]" />
-                  {shipment.currentLocation}
+                  {customsData.currentLocation}
                 </div>
               </div>
               <div>
                 <div className="text-xs text-gray-500">Hold Date/Time</div>
                 <div className="font-medium flex items-center gap-1.5">
                   <Calendar size={14} className="text-[#2B0071]/40" />
-                  {shipment.holdDate}
+                  {customsData.holdDate}
                 </div>
               </div>
               <div className="sm:col-span-2">
                 <div className="text-xs text-gray-500">Reason for Hold</div>
-                <div className="font-medium text-[#1A1A2E]">{shipment.reason}</div>
+                <div className="font-medium text-[#1A1A2E]">{customsData.reason}</div>
               </div>
               <div className="sm:col-span-2">
                 <div className="text-xs text-gray-500">Explanation</div>
-                <p className="text-sm text-gray-600">{shipment.explanation}</p>
+                <p className="text-sm text-gray-600">{customsData.explanation}</p>
               </div>
               <div className="sm:col-span-2">
                 <div className="text-xs text-gray-500">Instructions</div>
-                <p className="text-sm text-gray-600">{shipment.instructions}</p>
+                <p className="text-sm text-gray-600">{customsData.instructions}</p>
               </div>
             </div>
           </div>
@@ -179,7 +228,7 @@ function CustomsHoldPage() {
               Required Documents
             </h3>
             <div className="space-y-3">
-              {shipment.requiredDocuments.map((doc, idx) => (
+              {customsData.requiredDocuments.map((doc, idx) => (
                 <div key={idx} className="flex flex-wrap items-center justify-between gap-3 py-2 border-b border-[#E2E5F0] last:border-0">
                   <div className="flex items-center gap-2">
                     <FileText size={16} className="text-[#2B0071]/40" />
@@ -217,19 +266,19 @@ function CustomsHoldPage() {
           </div>
 
           {/* Fee and Actions */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
             {/* Fee card with payment links */}
             <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-6">
               <h4 className="text-sm font-bold text-[#1A1A2E] mb-3">Fee Information</h4>
-              {shipment.fee ? (
+              {customsData.fee ? (
                 <div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">{shipment.fee.description}</span>
+                    <span className="text-gray-600">{customsData.fee.description}</span>
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-lg">
-                        {shipment.fee.amount} {shipment.fee.currency}
+                        {customsData.fee.amount} {customsData.fee.currency}
                       </span>
-                      {!shipment.fee.paid && (
+                      {!customsData.fee.paid && (
                         <button
                           onClick={() => navigate(`/payment?tracking=${encodeURIComponent(tracking)}`)}
                           className="text-xs font-semibold text-[#FF5500] hover:text-[#2B0071] transition-colors flex items-center gap-0.5"
@@ -240,7 +289,7 @@ function CustomsHoldPage() {
                     </div>
                   </div>
                   <div className="mt-2 text-xs text-gray-400">
-                    {shipment.fee.paid ? (
+                    {customsData.fee.paid ? (
                       <span className="text-[#10B981] flex items-center gap-1">
                         <CheckCircle size={14} /> Paid
                       </span>
@@ -250,7 +299,7 @@ function CustomsHoldPage() {
                       </span>
                     )}
                   </div>
-                  {!shipment.fee.paid && (
+                  {!customsData.fee.paid && (
                     <button
                       onClick={() => navigate(`/payment?tracking=${encodeURIComponent(tracking)}`)}
                       className="mt-3 w-full btn-primary text-sm py-2.5 flex items-center justify-center gap-2"
@@ -264,27 +313,12 @@ function CustomsHoldPage() {
                 <p className="text-gray-500 text-sm">No additional fees required.</p>
               )}
             </div>
-
-            {/* Contact support */}
-            <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-6">
-              <h4 className="text-sm font-bold text-[#1A1A2E] mb-3">Need Assistance?</h4>
-              <p className="text-sm text-gray-600 mb-4">
-                Our customs support team is available to guide you through the process.
-              </p>
-              <button
-                onClick={handleContactSupport}
-                className="w-full btn-secondary text-sm py-2.5 flex items-center justify-center gap-2"
-              >
-                <MessageCircle size={16} />
-                Contact Support
-              </button>
-            </div>
           </div>
 
           {/* Next steps */}
           <div className="bg-[#F8F9FD] rounded-2xl border border-[#E2E5F0] p-6 text-sm text-gray-600">
             <p className="font-medium text-[#1A1A2E]">Next steps:</p>
-            <p>{shipment.nextSteps}</p>
+            <p>{customsData.nextSteps}</p>
           </div>
         </div>
       </div>

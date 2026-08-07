@@ -8,100 +8,8 @@ import {
 import TrackingForm from '../components/TrackingForm';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-
-// ----- Mock shipment data with 12-digit TCG tracking numbers -----
-const mockShipments = {
-  'TCG-123456789012': {
-    status: 'in_transit',
-    origin: 'London, UK',
-    destination: 'Edinburgh, UK',
-    shipmentDate: '2026-08-01',
-    estimatedDelivery: '2026-08-08',
-    currentLocation: 'Manchester Hub',
-    steps: [
-      { label: 'Order Received', status: 'completed', date: '2026-08-01 09:30' },
-      { label: 'Shipment Processed', status: 'completed', date: '2026-08-02 14:15' },
-      { label: 'In Transit', status: 'active', date: '2026-08-03 08:45' },
-      { label: 'Customs Clearance', status: 'upcoming' },
-      { label: 'Out for Delivery', status: 'upcoming' },
-      { label: 'Delivered', status: 'upcoming' },
-    ]
-  },
-  'TCG-234567890123': {
-    status: 'delivered',
-    origin: 'Manchester, UK',
-    destination: 'Bristol, UK',
-    shipmentDate: '2026-07-28',
-    estimatedDelivery: '2026-08-02',
-    currentLocation: 'Bristol Delivery Centre',
-    steps: [
-      { label: 'Order Received', status: 'completed', date: '2026-07-28 10:00' },
-      { label: 'Shipment Processed', status: 'completed', date: '2026-07-29 08:30' },
-      { label: 'In Transit', status: 'completed', date: '2026-07-30 06:15' },
-      { label: 'Customs Clearance', status: 'completed', date: '2026-07-31 12:00' },
-      { label: 'Out for Delivery', status: 'completed', date: '2026-08-01 09:00' },
-      { label: 'Delivered', status: 'completed', date: '2026-08-02 14:30' },
-    ]
-  },
-  'TCG-345678901234': {
-    status: 'customs',
-    origin: 'Glasgow, UK',
-    destination: 'London, UK',
-    shipmentDate: '2026-08-03',
-    estimatedDelivery: '2026-08-10',
-    currentLocation: 'Customs Clearance',
-    steps: [
-      { label: 'Order Received', status: 'completed', date: '2026-08-03 11:20' },
-      { label: 'Shipment Processed', status: 'completed', date: '2026-08-04 09:00' },
-      { label: 'In Transit', status: 'completed', date: '2026-08-05 07:30' },
-      { label: 'Customs Clearance', status: 'active', date: '2026-08-06 10:15' },
-      { label: 'Out for Delivery', status: 'upcoming' },
-      { label: 'Delivered', status: 'upcoming' },
-    ]
-  },
-  'TCG-456789012345': {
-    status: 'out_for_delivery',
-    origin: 'Birmingham, UK',
-    destination: 'Liverpool, UK',
-    shipmentDate: '2026-08-04',
-    estimatedDelivery: '2026-08-07',
-    currentLocation: 'Liverpool Depot',
-    steps: [
-      { label: 'Order Received', status: 'completed', date: '2026-08-04 08:00' },
-      { label: 'Shipment Processed', status: 'completed', date: '2026-08-05 10:30' },
-      { label: 'In Transit', status: 'completed', date: '2026-08-06 06:00' },
-      { label: 'Customs Clearance', status: 'completed', date: '2026-08-06 14:20' },
-      { label: 'Out for Delivery', status: 'active', date: '2026-08-07 07:00' },
-      { label: 'Delivered', status: 'upcoming' },
-    ]
-  }
-};
-
-// Helper functions (unchanged)
-const getStatusInfo = (status) => {
-  const map = {
-    ordered: { label: 'Order Received', color: 'text-[#2B0071]', bg: 'bg-[#2B0071]/10' },
-    processed: { label: 'Processed', color: 'text-[#2B0071]', bg: 'bg-[#2B0071]/10' },
-    in_transit: { label: 'In Transit', color: 'text-[#2B0071]', bg: 'bg-[#2B0071]/10' },
-    customs: { label: 'Customs Clearance', color: 'text-[#FF5500]', bg: 'bg-[#FF5500]/10' },
-    out_for_delivery: { label: 'Out for Delivery', color: 'text-[#2B0071]', bg: 'bg-[#2B0071]/10' },
-    delivered: { label: 'Delivered', color: 'text-[#10B981]', bg: 'bg-[#10B981]/10' },
-  };
-  return map[status] || map.ordered;
-};
-
-const StepIcon = ({ status }) => {
-  switch (status) {
-    case 'completed':
-      return <CheckCircle size={18} className="text-[#10B981]" />;
-    case 'active':
-      return <Circle size={18} className="text-[#2B0071] fill-[#2B0071]/20 animate-pulse" />;
-    case 'upcoming':
-      return <Circle size={18} className="text-[#E2E5F0]" />;
-    default:
-      return <Circle size={18} className="text-[#E2E5F0]" />;
-  }
-};
+import { publicApi } from '../api/publicApi';
+import { isCustomsStatus } from '../utils/helpers';
 
 function TrackPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -112,22 +20,34 @@ function TrackPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [shipment, setShipment] = useState(null);
   const [notFound, setNotFound] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (trackingParam) {
-      const data = mockShipments[trackingParam.toUpperCase()];
-      if (data) {
-        setShipment(data);
-        setNotFound(false);
+      const fetchShipment = async () => {
+        setLoading(true);
         setError('');
-      } else {
+        setNotFound(false);
         setShipment(null);
-        setNotFound(true);
-        setError('We couldn\'t find a shipment with that tracking number. Please check the number and try again.');
-      }
+        try {
+          const response = await publicApi.get(`/shipments/public/${trackingParam}`);
+          setShipment(response.data.shipment);
+        } catch (err) {
+          if (err.response?.status === 404) {
+            setNotFound(true);
+            setError('We couldn\'t find a shipment with that tracking number. Please check the number and try again.');
+          } else {
+            setError('An error occurred while fetching shipment details.');
+          }
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchShipment();
     } else {
       setShipment(null);
       setNotFound(false);
+      setError('');
     }
   }, [trackingParam]);
 
@@ -139,10 +59,8 @@ function TrackPage() {
     }
     setError('');
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setSearchParams({ tracking: trackingNumber.trim() });
-    }, 600);
+    setSearchParams({ tracking: trackingNumber.trim() });
+    setIsLoading(false);
   };
 
   const handleInputChange = (e) => {
@@ -150,12 +68,50 @@ function TrackPage() {
     if (error) setError('');
   };
 
+  const goHome = () => navigate('/');
+
+  const getStatusInfo = (status) => {
+    const map = {
+      'Order Received': { label: 'Order Received', color: 'text-[#2B0071]', bg: 'bg-[#2B0071]/10' },
+      Processing: { label: 'Processing', color: 'text-[#2B0071]', bg: 'bg-[#2B0071]/10' },
+      'In Transit': { label: 'In Transit', color: 'text-[#2B0071]', bg: 'bg-[#2B0071]/10' },
+      'Arrived at Facility': { label: 'Arrived at Facility', color: 'text-[#2B0071]', bg: 'bg-[#2B0071]/10' },
+      Customs: { label: 'Customs Clearance', color: 'text-[#FF5500]', bg: 'bg-[#FF5500]/10' },
+      'Customs Hold': { label: 'Customs Hold', color: 'text-[#FF5500]', bg: 'bg-[#FF5500]/10' },
+      'Customs Fee Pending': { label: 'Customs Fee Pending', color: 'text-[#FF5500]', bg: 'bg-[#FF5500]/10' },
+      'Shipment Delayed': { label: 'Shipment Delayed', color: 'text-[#EF4444]', bg: 'bg-[#EF4444]/10' },
+      Cleared: { label: 'Cleared', color: 'text-[#10B981]', bg: 'bg-[#10B981]/10' },
+      'Out for Delivery': { label: 'Out for Delivery', color: 'text-[#2B0071]', bg: 'bg-[#2B0071]/10' },
+      Delivered: { label: 'Delivered', color: 'text-[#10B981]', bg: 'bg-[#10B981]/10' },
+      Pending: { label: 'Pending', color: 'text-[#FF5500]', bg: 'bg-[#FF5500]/10' },
+    };
+    return map[status] || { label: status, color: 'text-gray-500', bg: 'bg-gray-100' };
+  };
+
+  const StepIcon = ({ status }) => {
+    switch (status) {
+      case 'completed':
+        return <CheckCircle size={18} className="text-[#10B981]" />;
+      case 'active':
+        return <Circle size={18} className="text-[#2B0071] fill-[#2B0071]/20 animate-pulse" />;
+      default:
+        return <Circle size={18} className="text-[#E2E5F0]" />;
+    }
+  };
+
   return (
     <>
       <Navbar />
       <div className="bg-[#F8F9FD] pt-[72px]">
         <div className="container-custom py-8 md:py-12">
-          {/* Tracking Form */}
+          <button
+            onClick={goHome}
+            className="inline-flex items-center gap-2 text-sm font-medium text-[#2B0071]/70 hover:text-[#2B0071] transition-colors duration-200 mb-6 group"
+          >
+            <ArrowLeft size={16} className="transition-transform duration-200 group-hover:-translate-x-1" />
+            Back to Home
+          </button>
+
           <div className="max-w-3xl mx-auto">
             <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-6 sm:p-8">
               <h1 className="heading-section text-[#1A1A2E] text-2xl sm:text-3xl mb-2">
@@ -176,10 +132,17 @@ function TrackPage() {
             </div>
           </div>
 
-          {/* Shipment Details – only when data exists */}
-          {shipment && !notFound && (
+          {loading && (
+            <div className="max-w-4xl mx-auto mt-10 text-center">
+              <div className="flex items-center justify-center">
+                <div className="w-8 h-8 border-4 border-[#2B0071]/20 border-t-[#2B0071] rounded-full animate-spin" />
+                <span className="ml-3 text-gray-500">Loading shipment...</span>
+              </div>
+            </div>
+          )}
+
+          {shipment && !loading && (
             <div className="max-w-4xl mx-auto mt-10 space-y-8">
-              {/* Status header */}
               <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-6 sm:p-8">
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
@@ -188,7 +151,7 @@ function TrackPage() {
                         <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
                         {getStatusInfo(shipment.status).label}
                       </span>
-                      <span className="text-xs text-gray-400 font-mono">{trackingParam}</span>
+                      <span className="text-xs text-gray-400 font-mono">{shipment.id}</span>
                     </div>
                     <h2 className="text-xl font-bold text-[#1A1A2E]">
                       {shipment.origin} → {shipment.destination}
@@ -198,23 +161,24 @@ function TrackPage() {
                     <div className="text-sm text-gray-500">Current Location</div>
                     <div className="font-semibold text-[#1A1A2E] flex items-center gap-1.5 justify-end">
                       <MapPin size={16} className="text-[#FF5500]" />
-                      {shipment.currentLocation}
+                      {shipment.currentLocation || shipment.location || '—'}
                     </div>
                   </div>
                 </div>
+
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-[#E2E5F0]">
                   <div>
                     <div className="text-xs text-gray-500">Shipment Date</div>
                     <div className="font-medium text-sm flex items-center gap-1.5 mt-0.5">
                       <Calendar size={14} className="text-[#2B0071]/40" />
-                      {new Date(shipment.shipmentDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      {shipment.date ? new Date(shipment.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
                     </div>
                   </div>
                   <div>
                     <div className="text-xs text-gray-500">Est. Delivery</div>
                     <div className="font-medium text-sm flex items-center gap-1.5 mt-0.5">
                       <Calendar size={14} className="text-[#FF5500]" />
-                      {new Date(shipment.estimatedDelivery).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      {shipment.expectedDelivery ? new Date(shipment.expectedDelivery).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
                     </div>
                   </div>
                   <div>
@@ -234,11 +198,10 @@ function TrackPage() {
                 </div>
               </div>
 
-              {/* Action buttons */}
               <div className="flex flex-wrap items-center justify-end gap-4">
-                {shipment.status === 'customs' && (
+                {isCustomsStatus(shipment.status) && (
                   <button
-                    onClick={() => navigate(`/customs?tracking=${encodeURIComponent(trackingParam)}`)}
+                    onClick={() => navigate(`/customs?tracking=${encodeURIComponent(shipment.id)}`)}
                     className="inline-flex items-center gap-2 text-sm font-semibold text-[#FF5500] hover:text-[#2B0071] transition-colors duration-200 group"
                   >
                     View customs hold details
@@ -246,7 +209,7 @@ function TrackPage() {
                   </button>
                 )}
                 <button
-                  onClick={() => navigate(`/shipment?tracking=${encodeURIComponent(trackingParam)}`)}
+                  onClick={() => navigate(`/shipment?tracking=${encodeURIComponent(shipment.id)}`)}
                   className="inline-flex items-center gap-2 text-sm font-semibold text-[#2B0071] hover:text-[#FF5500] transition-colors duration-200 group"
                 >
                   View full shipment details
@@ -254,18 +217,19 @@ function TrackPage() {
                 </button>
               </div>
 
-              {/* Timeline */}
               <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-6 sm:p-8">
                 <h3 className="text-lg font-bold text-[#1A1A2E] mb-6 flex items-center gap-2">
                   <Clock size={20} className="text-[#2B0071]" />
                   Shipment Timeline
                 </h3>
                 <div className="space-y-0 relative">
-                  {shipment.steps.map((step, index) => {
-                    const isLast = index === shipment.steps.length - 1;
+                  {(shipment.steps || shipment.history || []).map((step, index) => {
+                    const isLast = index === (shipment.steps || shipment.history || []).length - 1;
                     const isCompleted = step.status === 'completed';
                     const isActive = step.status === 'active';
                     const isUpcoming = step.status === 'upcoming';
+                    const label = step.event || step.label || '';
+
                     return (
                       <div key={index} className="flex gap-4">
                         <div className="flex flex-col items-center flex-shrink-0">
@@ -280,13 +244,13 @@ function TrackPage() {
                         </div>
                         <div className="pb-6 pt-0.5 flex-1">
                           <div className={`text-sm font-semibold ${isUpcoming ? 'text-gray-400' : 'text-[#1A1A2E]'}`}>
-                            {step.label}
-                            {step.status === 'active' && (
+                            {label}
+                            {isActive && (
                               <span className="ml-2 text-xs font-normal text-[#2B0071] bg-[#2B0071]/5 px-2 py-0.5 rounded-full">
                                 In progress
                               </span>
                             )}
-                            {step.status === 'upcoming' && (
+                            {isUpcoming && (
                               <span className="ml-2 text-xs font-normal text-gray-400">Pending</span>
                             )}
                           </div>
@@ -302,7 +266,6 @@ function TrackPage() {
             </div>
           )}
 
-          {/* Not found / empty state */}
           {notFound && !shipment && trackingParam && (
             <div className="max-w-3xl mx-auto mt-10 text-center">
               <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-8">

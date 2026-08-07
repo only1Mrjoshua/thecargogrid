@@ -6,9 +6,12 @@ import {
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { useToast } from '../context/ToastContext';
 
 function ContactPage() {
   const navigate = useNavigate();
+  const { showToast } = useToast();
+  
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -18,7 +21,9 @@ function ContactPage() {
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+
+  // Formspree endpoint – replace with your own form ID
+  const FORMSPREE_ENDPOINT = import.meta.env.VITE_FORMSPREE_ENDPOINT || 'https://formspree.io/f/your-form-id';
 
   const validate = () => {
     const newErrors = {};
@@ -41,7 +46,7 @@ function ContactPage() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
@@ -50,41 +55,37 @@ function ContactPage() {
     }
 
     setIsSubmitting(true);
-    setTimeout(() => {
+
+    try {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        // Success
+        showToast('Message sent successfully! Our team will get back to you within 24 hours.', 'success');
+        // Reset form
+        setFormData({ name: '', email: '', trackingNumber: '', subject: '', message: '' });
+        setErrors({});
+      } else {
+        const data = await response.json();
+        showToast(data.error || 'Failed to send message. Please try again.', 'error');
+      }
+    } catch (error) {
+      console.error('Contact form error:', error);
+      showToast('Network error. Please check your connection and try again.', 'error');
+    } finally {
       setIsSubmitting(false);
-      setIsSuccess(true);
-      setFormData({ name: '', email: '', trackingNumber: '', subject: '', message: '' });
-    }, 1500);
+    }
   };
 
   const goToFAQ = () => navigate('/faq');
   const goToTrack = () => navigate('/track');
-
-  if (isSuccess) {
-    return (
-      <>
-        <Navbar />
-        <div className="min-h-screen bg-[#F8F9FD] pt-[72px] flex items-center justify-center">
-          <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-8 max-w-md text-center">
-            <div className="w-16 h-16 rounded-full bg-[#10B981]/10 flex items-center justify-center mx-auto mb-4">
-              <CheckCircle size={32} className="text-[#10B981]" />
-            </div>
-            <h2 className="text-2xl font-bold text-[#1A1A2E]">Message Sent!</h2>
-            <p className="text-gray-600 mt-2">
-              Thank you for contacting us. Our support team will get back to you within 24 hours.
-            </p>
-            <button
-              onClick={() => setIsSuccess(false)}
-              className="mt-6 btn-primary"
-            >
-              Send Another Message
-            </button>
-          </div>
-        </div>
-        <Footer />
-      </>
-    );
-  }
 
   return (
     <>

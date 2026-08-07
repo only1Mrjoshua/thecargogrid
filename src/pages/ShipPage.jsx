@@ -160,7 +160,7 @@ function ShipPage() {
         handlingFee: parseFloat(handlingFee.toFixed(2)),
         total: parseFloat(total.toFixed(2)),
         deliveryTime,
-        currency: 'GBP',
+        currency: 'USD',
       });
       setIsQuoteLoading(false);
       nextStep(); // Go to sender step

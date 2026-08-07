@@ -13,7 +13,7 @@ const mockPaymentData = {
     destination: 'London, UK',
     feeDescription: 'Customs processing fee',
     amount: 35.00,
-    currency: 'GBP',
+    currency: 'USD',
     invoiceNumber: 'INV-2026-0042',
     dueDate: '2026-08-15',
   },
