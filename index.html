@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
     <!-- ========== FAVICONS ========== -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -12,51 +14,64 @@
     <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- ========== THEME COLOR (mobile) ========== -->
+    <meta name="theme-color" content="#2B0071" />
+    <meta name="msapplication-TileColor" content="#2B0071" />
 
     <!-- ========== PRIMARY SEO ========== -->
-    <title>The Cargo Grid — International Logistics & Real‑Time Package Tracking</title>
+    <title>The Cargo Grid — International Logistics &amp; Real‑Time Package Tracking</title>
     <meta
       name="description"
-      content="Track your shipment in real‑time with The Cargo Grid. Reliable international logistics, UK & global shipping, customs clearance, and delivery services."
+      content="Track your shipment in real‑time with The Cargo Grid. Reliable international logistics, UK &amp; global shipping, customs clearance, and delivery services."
     />
     <meta
       name="keywords"
       content="The Cargo Grid, logistics, package tracking, international shipping, UK delivery, freight, customs clearance, real‑time tracking, shipment tracking, courier, supply chain, cargo, parcel delivery"
     />
     <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow" />
     <link rel="canonical" href="https://thecargogrid.com/" />
+
+    <!-- ========== GEO / LOCAL SEO ========== -->
+    <meta name="geo.region" content="GB" />
+    <meta name="geo.placename" content="London" />
+    <meta name="geo.position" content="51.5074;0.1278" />
+    <meta name="ICBM" content="51.5074, 0.1278" />
 
     <!-- ========== OPEN GRAPH (Facebook, LinkedIn, etc.) ========== -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="The Cargo Grid — International Logistics & Real‑Time Package Tracking" />
+    <meta property="og:title" content="The Cargo Grid — International Logistics &amp; Real‑Time Package Tracking" />
     <meta
       property="og:description"
-      content="Track your shipment in real‑time with The Cargo Grid. Reliable logistics, UK & global shipping, customs clearance, and delivery services."
+      content="Track your shipment in real‑time with The Cargo Grid. Reliable logistics, UK &amp; global shipping, customs clearance, and delivery services."
     />
     <meta property="og:url" content="https://thecargogrid.com/" />
-
-    <!-- ===== PREVIEW IMAGE (Using preview.png – square, 1254×1254) ===== -->
-    <meta property="og:image" content="/preview.png" />
-    <meta property="og:image:secure_url" content="/preview.png" />
+    <meta property="og:image" content="https://thecargogrid.com/preview.png" />
+    <meta property="og:image:secure_url" content="https://thecargogrid.com/preview.png" />
     <meta property="og:image:width" content="1254" />
     <meta property="og:image:height" content="1254" />
     <meta property="og:image:alt" content="The Cargo Grid logistics and package tracking service" />
-
     <meta property="og:site_name" content="The Cargo Grid" />
     <meta property="og:locale" content="en_GB" />
 
     <!-- ========== TWITTER CARD ========== -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="The Cargo Grid — International Logistics & Real‑Time Package Tracking" />
+    <meta name="twitter:title" content="The Cargo Grid — International Logistics &amp; Real‑Time Package Tracking" />
     <meta
       name="twitter:description"
-      content="Track your shipment in real‑time with The Cargo Grid. Reliable logistics, UK & global shipping, customs clearance, and delivery services."
+      content="Track your shipment in real‑time with The Cargo Grid. Reliable logistics, UK &amp; global shipping, customs clearance, and delivery services."
     />
-    <meta name="twitter:image" content="/preview.png" />
+    <meta name="twitter:image" content="https://thecargogrid.com/preview.png" />
     <meta name="twitter:image:alt" content="The Cargo Grid logistics and package tracking service" />
 
+    <!-- ========== SEARCH ENGINE VERIFICATION ========== -->
+    <!-- Google Search Console (replace with your own key) -->
+    <meta name="google-site-verification=-y1S8sEsb0Hzyaj_j2MLvznf-rXj_sb6F1w0tS6Y_RE" />
+    <!-- Bing Webmaster Tools (optional) -->
+    <meta name="msvalidate.01" content="YOUR_BING_VERIFICATION_CODE" />
+
     <!-- ========== JSON‑LD STRUCTURED DATA ========== -->
+    <!-- Organization (without socials) -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -71,13 +86,15 @@
           "contactType": "Customer Service",
           "availableLanguage": ["English"]
         },
-        "sameAs": [
-          "https://www.linkedin.com/company/thecargogrid",
-          "https://twitter.com/thecargogrid"
-        ]
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "London",
+          "addressCountry": "GB"
+        }
       }
     </script>
 
+    <!-- WebSite + SearchAction -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -87,8 +104,70 @@
         "description": "Track your shipment in real‑time with The Cargo Grid. Reliable international logistics, package tracking, and delivery services.",
         "potentialAction": {
           "@type": "SearchAction",
-          "target": "https://thecargogrid.com/track?tracking={search_term_string}",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://thecargogrid.com/track?tracking={search_term_string}"
+          },
           "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
+
+    <!-- BreadcrumbList (site structure) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://thecargogrid.com/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Track Shipment",
+            "item": "https://thecargogrid.com/track"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Services",
+            "item": "https://thecargogrid.com/services"
+          },
+          {
+            "@type": "ListItem",
+            "position": 4,
+            "name": "Ship a Package",
+            "item": "https://thecargogrid.com/ship"
+          },
+          {
+            "@type": "ListItem",
+            "position": 5,
+            "name": "Contact",
+            "item": "https://thecargogrid.com/contact"
+          }
+        ]
+      }
+    </script>
+
+    <!-- Service (Logistics) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "serviceType": "Logistics & Package Tracking",
+        "provider": {
+          "@type": "Organization",
+          "name": "The Cargo Grid"
+        },
+        "description": "International shipping, express delivery, customs clearance, and real‑time tracking.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "USD"
         }
       }
     </script>
@@ -101,9 +180,12 @@
       rel="stylesheet"
     />
 
-    <!-- ========== PRELOAD KEY IMAGES ========== -->
+    <!-- ========== PERFORMANCE: PRELOAD KEY ASSETS ========== -->
     <link rel="preload" as="image" href="/hero-logistics.jpg" />
     <link rel="preload" as="image" href="/logo.png" />
+
+    <!-- ========== SITEMAP (optional but recommended) ========== -->
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
 
   </head>
 
