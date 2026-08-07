@@ -50,7 +50,7 @@ function Navbar() {
         <div className="container-custom h-full flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 flex-shrink-0" aria-label="The Cargo Grid home">
-            <img src="/logo.png" alt="The Cargo Grid" className="h-9 w-auto object-contain" />
+            <img src="/logo.png" alt="The Cargo Grid" className="h-14 w-auto object-contain" />
           </Link>
 
           {/* Desktop Nav */}
