@@ -6,10 +6,10 @@ import {
   Info, Package
 } from 'lucide-react';
 
-// ----- Mock data for customs hold shipments -----
+// ----- Mock data for customs hold shipments (TCG-12-digit format) -----
 const mockCustomsShipments = {
-  'CG-789012': {
-    trackingNumber: 'CG-789012',
+  'TCG-345678901234': {
+    trackingNumber: 'TCG-345678901234',
     status: 'customs_hold',
     origin: 'Glasgow, UK',
     destination: 'London, UK',
@@ -114,7 +114,7 @@ function CustomsHoldPage() {
         </button>
 
         <div className="max-w-4xl mx-auto space-y-8">
-          {/* ----- REDESIGNED HEADER CARD ----- */}
+          {/* REDESIGNED HEADER CARD */}
           <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-6 sm:p-8">
             <div className="flex flex-col sm:flex-row sm:items-start gap-4">
               <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#FF5500]/10 flex items-center justify-center text-[#FF5500]">

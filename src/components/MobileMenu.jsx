@@ -1,4 +1,3 @@
-// src/components/MobileMenu.jsx
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { X, ChevronRight } from 'lucide-react';
@@ -7,6 +6,7 @@ const navLinks = [
   { label: 'Home', href: '/' },
   { label: 'Track Shipment', href: '/track' },
   { label: 'Services', href: '/services' },
+  { label: 'Ship a Package', href: '/ship' },
   { label: 'About Us', href: '/about' },
   { label: 'FAQ', href: '/faq' },
   { label: 'Contact', href: '/contact' },
@@ -32,17 +32,14 @@ function MobileMenu({ isOpen, onClose }) {
       aria-modal="true"
       aria-label="Mobile navigation"
     >
-      {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300"
         onClick={onClose}
         aria-hidden="true"
       />
 
-      {/* Drawer */}
       <div className="absolute right-0 top-0 h-full w-full max-w-sm bg-[#FFFFFF] shadow-2xl animate-slide-down overflow-y-auto">
         <div className="flex flex-col h-full">
-          {/* Header */}
           <div className="flex items-center justify-between px-5 py-4 border-b border-[#E2E5F0]">
             <img src="/logo.png" alt="The Cargo Grid" className="h-8 w-auto object-contain" />
             <button
@@ -54,7 +51,6 @@ function MobileMenu({ isOpen, onClose }) {
             </button>
           </div>
 
-          {/* Links */}
           <nav className="flex-1 px-5 py-8 space-y-1" aria-label="Mobile navigation">
             {navLinks.map((link) => (
               <Link
@@ -69,12 +65,18 @@ function MobileMenu({ isOpen, onClose }) {
             ))}
           </nav>
 
-          {/* Bottom CTA */}
-          <div className="px-5 py-6 border-t border-[#E2E5F0] bg-[#F8F9FD]">
+          <div className="px-5 py-6 border-t border-[#E2E5F0] bg-[#F8F9FD] space-y-3">
+            <Link
+              to="/ship"
+              onClick={onClose}
+              className="flex items-center justify-center gap-2 w-full py-3.5 text-base font-semibold text-[#2B0071] bg-[#2B0071]/5 rounded-xl transition-all duration-300 hover:bg-[#2B0071]/10"
+            >
+              Ship a Package
+            </Link>
             <Link
               to="/track"
               onClick={onClose}
-              className="flex items-center justify-center gap-2 w-full py-3.5 text-base font-semibold text-white bg-[#FF5500] rounded-xl transition-all duration-300 hover:bg-[#e64a00] focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+              className="flex items-center justify-center gap-2 w-full py-3.5 text-base font-semibold text-white bg-[#FF5500] rounded-xl transition-all duration-300 hover:bg-[#e64a00]"
             >
               Track Package
               <ChevronRight size={18} />

@@ -14,7 +14,7 @@ const faqData = [
     id: 2,
     category: 'Tracking',
     question: 'Where can I find my tracking number?',
-    answer: 'Your tracking number is provided in your shipment confirmation email and on your order receipt. It typically starts with "CG-" followed by a series of numbers. If you cannot find it, please contact our support team.'
+    answer: 'Your tracking number is provided in your shipment confirmation email and on your order receipt. It typically starts with "TCG-" followed by a series of numbers. If you cannot find it, please contact our support team.'
   },
   {
     id: 3,

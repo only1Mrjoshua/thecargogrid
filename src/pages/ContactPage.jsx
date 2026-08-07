@@ -149,7 +149,7 @@ function ContactPage() {
                       id="trackingNumber"
                       name="trackingNumber"
                       type="text"
-                      placeholder="CG-123456"
+                      placeholder="TCG-123456789012"
                       value={formData.trackingNumber}
                       onChange={handleChange}
                       className="w-full px-4 py-3 text-base bg-white border border-[#E2E5F0] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF5500]/20 focus:border-[#FF5500] transition-all"

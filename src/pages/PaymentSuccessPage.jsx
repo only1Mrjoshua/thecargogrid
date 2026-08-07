@@ -6,11 +6,11 @@ import {
   ShieldCheck, Truck
 } from 'lucide-react';
 
-// ----- Mock data for receipt lookup -----
+// ----- Mock data for receipt lookup (using TCG-12-digit format) -----
 const mockReceiptData = {
-  'CG-789012': {
+  'TCG-345678901234': {
     customerName: 'John Smith',
-    trackingNumber: 'CG-789012',
+    trackingNumber: 'TCG-345678901234',
     paymentReference: 'PAY-2026-00842',
     amount: 35.00,
     currency: 'GBP',
@@ -42,11 +42,9 @@ function PaymentSuccessPage() {
       setTimeout(() => {
         const data = mockReceiptData[tracking.toUpperCase()];
         if (data) {
-          // Add a unique reference if missing, but keep the mock one
           setReceipt(data);
           setNotFound(false);
         } else {
-          // If not found, we can still show a generic success or not found
           setReceipt(null);
           setNotFound(true);
         }
@@ -67,8 +65,6 @@ function PaymentSuccessPage() {
   };
 
   const handleDownload = () => {
-    // In a real app, this would generate a PDF.
-    // For now, we print to console and alert the user.
     alert('Downloading receipt as PDF (demo)');
     console.log('Downloading receipt for:', receipt?.trackingNumber);
   };
@@ -114,7 +110,7 @@ function PaymentSuccessPage() {
         </button>
 
         <div className="max-w-3xl mx-auto">
-          {/* ----- SUCCESS CARD / RECEIPT ----- */}
+          {/* SUCCESS CARD / RECEIPT */}
           <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card overflow-hidden print:shadow-none print:border-0">
             {/* Top section – green success bar */}
             <div className="bg-[#10B981]/5 border-b border-[#10B981]/10 px-6 sm:px-8 py-6 sm:py-8 text-center">
@@ -223,7 +219,7 @@ function PaymentSuccessPage() {
             </div>
           </div>
 
-          {/* ----- ACTION BUTTONS ----- */}
+          {/* ACTION BUTTONS */}
           <div className="mt-8 flex flex-wrap gap-3 justify-center print:hidden">
             <button
               onClick={handleDownload}
@@ -257,7 +253,7 @@ function PaymentSuccessPage() {
         </div>
       </div>
 
-      {/* ----- PRINT STYLES (inline) ----- */}
+      {/* PRINT STYLES (inline) */}
       <style>{`
         @media print {
           body * {

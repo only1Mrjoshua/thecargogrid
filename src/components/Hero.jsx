@@ -119,7 +119,7 @@ function Hero() {
                   <span className="text-xs font-semibold text-[#1A1A2E] tracking-wider uppercase">In Transit</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm">
-                  <span className="font-mono font-bold text-[#2B0071]">CG-928374</span>
+                  <span className="font-mono font-bold text-[#2B0071]">TCG-928374123456</span>
                   <span className="text-[#E2E5F0]">|</span>
                   <span className="flex items-center gap-1 text-gray-600">
                     <MapPin size={14} className="text-[#FF5500]" />

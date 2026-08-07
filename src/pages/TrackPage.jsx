@@ -9,9 +9,9 @@ import TrackingForm from '../components/TrackingForm';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
-// ----- Mock shipment data (unchanged) -----
+// ----- Mock shipment data with 12-digit TCG tracking numbers -----
 const mockShipments = {
-  'CG-928374': {
+  'TCG-123456789012': {
     status: 'in_transit',
     origin: 'London, UK',
     destination: 'Edinburgh, UK',
@@ -27,7 +27,7 @@ const mockShipments = {
       { label: 'Delivered', status: 'upcoming' },
     ]
   },
-  'CG-123456': {
+  'TCG-234567890123': {
     status: 'delivered',
     origin: 'Manchester, UK',
     destination: 'Bristol, UK',
@@ -43,7 +43,7 @@ const mockShipments = {
       { label: 'Delivered', status: 'completed', date: '2026-08-02 14:30' },
     ]
   },
-  'CG-789012': {
+  'TCG-345678901234': {
     status: 'customs',
     origin: 'Glasgow, UK',
     destination: 'London, UK',
@@ -59,7 +59,7 @@ const mockShipments = {
       { label: 'Delivered', status: 'upcoming' },
     ]
   },
-  'CG-456789': {
+  'TCG-456789012345': {
     status: 'out_for_delivery',
     origin: 'Birmingham, UK',
     destination: 'Liverpool, UK',
@@ -153,7 +153,6 @@ function TrackPage() {
   return (
     <>
       <Navbar />
-      {/* REMOVED min-h-screen from this container – height now determined by content */}
       <div className="bg-[#F8F9FD] pt-[72px]">
         <div className="container-custom py-8 md:py-12">
           {/* Tracking Form */}
@@ -182,7 +181,6 @@ function TrackPage() {
             <div className="max-w-4xl mx-auto mt-10 space-y-8">
               {/* Status header */}
               <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-6 sm:p-8">
-                {/* ... (unchanged) ... */}
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-3 mb-1">

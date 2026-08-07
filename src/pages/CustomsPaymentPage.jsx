@@ -5,10 +5,10 @@ import {
   MapPin, Calendar, FileText, MessageCircle
 } from 'lucide-react';
 
-// ----- Mock data (extend from customs hold) -----
+// ----- Mock data (extend from customs hold) with TCG-12-digit format -----
 const mockPaymentData = {
-  'CG-789012': {
-    trackingNumber: 'CG-789012',
+  'TCG-345678901234': {
+    trackingNumber: 'TCG-345678901234',
     origin: 'Glasgow, UK',
     destination: 'London, UK',
     feeDescription: 'Customs processing fee',

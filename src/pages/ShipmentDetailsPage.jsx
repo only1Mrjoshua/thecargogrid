@@ -6,10 +6,10 @@ import {
   CheckCircle, Circle, AlertCircle, Clock, Info
 } from 'lucide-react';
 
-// ----- Complete mock data (all 4 shipments) -----
+// ----- Complete mock data (all 4 shipments) with TCG-12-digit tracking numbers -----
 const mockShipments = {
-  'CG-928374': {
-    trackingNumber: 'CG-928374',
+  'TCG-123456789012': {
+    trackingNumber: 'TCG-123456789012',
     status: 'in_transit',
     packageType: 'Standard Parcel',
     sender: {
@@ -56,8 +56,8 @@ const mockShipments = {
       { name: 'Packing List', url: '#', required: false },
     ]
   },
-  'CG-123456': {
-    trackingNumber: 'CG-123456',
+  'TCG-234567890123': {
+    trackingNumber: 'TCG-234567890123',
     status: 'delivered',
     packageType: 'Express Parcel',
     sender: {
@@ -103,8 +103,8 @@ const mockShipments = {
       { name: 'Packing List', url: '#', required: false },
     ]
   },
-  'CG-789012': {
-    trackingNumber: 'CG-789012',
+  'TCG-345678901234': {
+    trackingNumber: 'TCG-345678901234',
     status: 'customs',
     packageType: 'Standard Parcel',
     sender: {
@@ -150,8 +150,8 @@ const mockShipments = {
       { name: 'Proof of Value', url: '#', required: false },
     ]
   },
-  'CG-456789': {
-    trackingNumber: 'CG-456789',
+  'TCG-456789012345': {
+    trackingNumber: 'TCG-456789012345',
     status: 'out_for_delivery',
     packageType: 'Express Parcel',
     sender: {
@@ -198,7 +198,7 @@ const mockShipments = {
   }
 };
 
-// Helper to get status info
+// Helper to get status info (unchanged)
 const getStatusInfo = (status) => {
   const map = {
     ordered: { label: 'Order Received', color: 'text-[#2B0071]', bg: 'bg-[#2B0071]/10' },
@@ -310,7 +310,6 @@ function ShipmentDetailsPage() {
               <p className="text-sm text-gray-500 font-mono">Tracking #: {shipment.trackingNumber}</p>
             </div>
             <div className="flex flex-wrap gap-2">
-              {/* View Documents button – new */}
               <button
                 onClick={() => navigate(`/documents?tracking=${encodeURIComponent(tracking)}`)}
                 className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-[#2B0071] bg-[#2B0071]/5 rounded-lg hover:bg-[#2B0071]/10 transition-colors"

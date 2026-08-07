@@ -5,7 +5,7 @@ import { Package, Clock, Globe2, ShieldCheck } from 'lucide-react';
 const stats = [
   {
     label: 'Shipments Delivered',
-    value: '10K+',
+    value: '100K',
     icon: Package,
     suffix: '+',
   },

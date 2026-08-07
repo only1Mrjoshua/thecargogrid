@@ -75,7 +75,7 @@ function TrackingPreview() {
                   <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />
                   IN TRANSIT
                 </span>
-                <span className="text-xs text-gray-400 font-mono">CG-928374</span>
+                <span className="text-xs text-gray-400 font-mono">TCG-928374123456</span>
               </div>
               <div className="flex items-center gap-2 text-xs text-gray-500">
                 <Clock size={14} />

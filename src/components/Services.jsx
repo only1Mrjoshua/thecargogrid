@@ -1,6 +1,5 @@
-// src/components/Services.jsx
 import { useEffect, useRef } from 'react';
-import { Globe2, Zap, ShieldCheck, MapPin, Package, Truck } from 'lucide-react';
+import { Globe2, Zap, ShieldCheck, MapPin, Package, Truck, Box } from 'lucide-react';
 import ServiceCard from './ServiceCard';
 
 const services = [
@@ -33,6 +32,11 @@ const services = [
     title: 'Door-to-Door Delivery',
     description: 'Convenient delivery from dispatch to destination.',
     icon: Truck,
+  },
+  {
+    title: 'Ship a Package',
+    description: 'Book a shipment online – get a quote, provide details, and pay securely.',
+    icon: Box,
   },
 ];
 

@@ -5,10 +5,10 @@ import {
   ArrowLeft, AlertCircle, Package, FileText
 } from 'lucide-react';
 
-// ----- Mock data for failed payment -----
+// ----- Mock data for failed payment (TCG-12-digit format) -----
 const mockFailedData = {
-  'CG-789012': {
-    trackingNumber: 'CG-789012',
+  'TCG-345678901234': {
+    trackingNumber: 'TCG-345678901234',
     transactionReference: 'TXN-2026-00842',
     amount: 35.00,
     currency: 'GBP',
@@ -92,7 +92,7 @@ function PaymentFailedPage() {
         </button>
 
         <div className="max-w-3xl mx-auto">
-          {/* ----- ERROR CARD ----- */}
+          {/* ERROR CARD */}
           <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card overflow-hidden">
             {/* Top section – red error bar */}
             <div className="bg-[#EF4444]/5 border-b border-[#EF4444]/10 px-6 sm:px-8 py-6 sm:py-8 text-center">
@@ -109,7 +109,6 @@ function PaymentFailedPage() {
 
             {/* Failure details */}
             <div className="p-6 sm:p-8">
-              {/* Transaction details grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
                 <div>
                   <p className="text-xs text-gray-500 uppercase tracking-wider">Tracking Number</p>
@@ -176,7 +175,6 @@ function PaymentFailedPage() {
                 </button>
               </div>
 
-              {/* Helpful hint */}
               <p className="mt-6 text-xs text-gray-400 text-center">
                 If the issue persists, please contact your bank or try a different payment method.
               </p>

@@ -12,7 +12,8 @@ import FAQPage from './pages/FAQPage';
 import AboutPage from './pages/AboutPage';
 import ServicesPage from './pages/ServicesPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
-import TermsPage from './pages/TermsPage'; // new import
+import TermsPage from './pages/TermsPage';
+import ShipPage from './pages/ShipPage';
 
 function App() {
   return (
@@ -30,7 +31,8 @@ function App() {
       <Route path="/about" element={<AboutPage />} />
       <Route path="/services" element={<ServicesPage />} />
       <Route path="/privacy" element={<PrivacyPolicyPage />} />
-      <Route path="/terms" element={<TermsPage />} /> // new route
+      <Route path="/terms" element={<TermsPage />} />
+      <Route path="/ship" element={<ShipPage />} />
     </Routes>
   );
 }

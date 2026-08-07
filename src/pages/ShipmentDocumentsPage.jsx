@@ -6,10 +6,10 @@ import {
   File, FileCheck, FileWarning, Receipt, Truck
 } from 'lucide-react';
 
-// ----- Mock document data per tracking number -----
+// ----- Mock document data per tracking number (TCG-12-digit) -----
 const mockDocuments = {
-  'CG-928374': {
-    trackingNumber: 'CG-928374',
+  'TCG-123456789012': {
+    trackingNumber: 'TCG-123456789012',
     origin: 'London, UK',
     destination: 'Edinburgh, UK',
     documents: [
@@ -19,8 +19,8 @@ const mockDocuments = {
       { id: 4, name: 'Delivery Confirmation', type: 'Delivery', date: '2026-08-08', size: '324 KB', required: false },
     ]
   },
-  'CG-123456': {
-    trackingNumber: 'CG-123456',
+  'TCG-234567890123': {
+    trackingNumber: 'TCG-234567890123',
     origin: 'Manchester, UK',
     destination: 'Bristol, UK',
     documents: [
@@ -30,8 +30,8 @@ const mockDocuments = {
       { id: 4, name: 'Proof of Delivery', type: 'Delivery', date: '2026-08-02', size: '1.8 MB', required: false },
     ]
   },
-  'CG-789012': {
-    trackingNumber: 'CG-789012',
+  'TCG-345678901234': {
+    trackingNumber: 'TCG-345678901234',
     origin: 'Glasgow, UK',
     destination: 'London, UK',
     documents: [
@@ -43,8 +43,8 @@ const mockDocuments = {
       { id: 6, name: 'Payment Receipt', type: 'Receipt', date: '2026-08-07', size: '324 KB', required: false },
     ]
   },
-  'CG-456789': {
-    trackingNumber: 'CG-456789',
+  'TCG-456789012345': {
+    trackingNumber: 'TCG-456789012345',
     origin: 'Birmingham, UK',
     destination: 'Liverpool, UK',
     documents: [
@@ -55,7 +55,7 @@ const mockDocuments = {
   }
 };
 
-// Icon mapping for document types
+// Icon mapping for document types (unchanged)
 const getDocIcon = (type) => {
   const map = {
     'Waybill': FileText,

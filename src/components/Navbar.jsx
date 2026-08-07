@@ -1,4 +1,3 @@
-// src/components/Navbar.jsx
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, ChevronRight } from 'lucide-react';
@@ -8,6 +7,7 @@ const navLinks = [
   { label: 'Home', href: '/' },
   { label: 'Track Shipment', href: '/track' },
   { label: 'Services', href: '/services' },
+  { label: 'Ship a Package', href: '/ship' },
   { label: 'About Us', href: '/about' },
   { label: 'FAQ', href: '/faq' },
   { label: 'Contact', href: '/contact' },
@@ -48,18 +48,10 @@ function Navbar() {
         role="banner"
       >
         <div className="container-custom h-full flex items-center justify-between">
-            {/* Logo */}
-            <Link
-            to="/"
-            className="flex items-center gap-2.5 flex-shrink-0"
-            aria-label="The Cargo Grid home"
-            >
-            <img
-                src="/logo.png"
-                alt="The Cargo Grid"
-                className="h-16 w-auto object-contain"
-            />
-            </Link>
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-2.5 flex-shrink-0" aria-label="The Cargo Grid home">
+            <img src="/logo.png" alt="The Cargo Grid" className="h-9 w-auto object-contain" />
+          </Link>
 
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-8" aria-label="Main navigation">
@@ -74,8 +66,14 @@ function Navbar() {
             ))}
           </nav>
 
-          {/* Desktop CTA */}
-          <div className="hidden lg:block">
+          {/* Desktop CTAs */}
+          <div className="hidden lg:flex items-center gap-3">
+            <Link
+              to="/ship"
+              className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-[#2B0071] bg-[#2B0071]/5 rounded-xl transition-all duration-300 hover:bg-[#2B0071]/10"
+            >
+              Ship Now
+            </Link>
             <Link
               to="/track"
               className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-[#FF5500] rounded-xl transition-all duration-300 hover:bg-[#e64a00] hover:-translate-y-0.5 hover:shadow-lg hover:shadow-orange-500/25 focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
