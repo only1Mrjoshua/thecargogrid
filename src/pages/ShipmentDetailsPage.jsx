@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import {
   MapPin, Calendar, Package, User, Mail, Phone,
   FileText, CreditCard, MessageCircle, ArrowLeft, Download,
-  CheckCircle, Circle, AlertCircle, Clock, Info
+  CheckCircle, Circle, AlertCircle, Clock, Info, Image
 } from 'lucide-react';
 import { publicApi } from '../api/publicApi';
 import { isCustomsStatus } from '../utils/helpers';
@@ -43,7 +43,11 @@ function ShipmentDetailsPage() {
         setNotFound(false);
         try {
           const response = await publicApi.get(`/shipments/public/${tracking}`);
-          setShipment(response.data.shipment);
+          const data = response.data.shipment;
+          console.log('📦 Shipment data:', data);
+          console.log('🖼️ packageDetails:', data.packageDetails);
+          console.log('🖼️ images array:', data.packageDetails?.images);
+          setShipment(data);
         } catch (err) {
           if (err.response?.status === 404) {
             setNotFound(true);
@@ -68,16 +72,20 @@ function ShipmentDetailsPage() {
     alert(`Downloading ${docName} (demo)`);
   };
 
-  const handlePayFees = () => {
-    alert('Proceeding to payment gateway (demo)');
-  };
-
   const handleContactSupport = () => {
     alert('Opening support chat (demo)');
   };
 
   const handleViewDocuments = () => {
     alert('Showing required documents (demo)');
+  };
+
+  // WhatsApp payment link
+  const getWhatsAppLink = () => {
+    const message = encodeURIComponent(
+      `Hello The Cargo Grid,\n\nI would like to pay the outstanding fees for shipment ${shipment.id || shipment.trackingNumber}.\n\nPlease guide me on how to complete the payment.\n\nThank you.`
+    );
+    return `https://wa.me/15123255688?text=${message}`;
   };
 
   if (loading) {
@@ -118,6 +126,9 @@ function ShipmentDetailsPage() {
   }
 
   const statusInfo = getStatusInfo(shipment.status);
+
+  // Determine the timeline steps
+  const timelineSteps = shipment.history || shipment.steps || [];
 
   return (
     <div className="min-h-screen bg-[#F8F9FD] pt-[72px]">
@@ -166,15 +177,6 @@ function ShipmentDetailsPage() {
                 <Download size={16} />
                 Download Docs
               </button>
-              {shipment.fees && !shipment.fees.paid && (
-                <button
-                  onClick={handlePayFees}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-[#FF5500] rounded-lg hover:bg-[#e64a00] transition-colors"
-                >
-                  <CreditCard size={16} />
-                  Pay Fees
-                </button>
-              )}
               <button
                 onClick={handleContactSupport}
                 className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-[#1A1A2E] border border-[#E2E5F0] rounded-lg hover:bg-[#F8F9FD] transition-colors"
@@ -248,6 +250,28 @@ function ShipmentDetailsPage() {
               </div>
             </div>
 
+            {/* Package Images */}
+            {shipment.packageDetails?.images?.length > 0 ? (
+              <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-6 sm:p-8">
+                <h3 className="text-lg font-bold text-[#1A1A2E] mb-4 flex items-center gap-2">
+                  <Image size={20} className="text-[#2B0071]" />
+                  Package Images
+                </h3>
+                <div className="flex flex-wrap gap-3">
+                  {shipment.packageDetails.images.map((url, idx) => (
+                    <div key={idx} className="w-24 h-24 rounded-lg border border-[#E2E5F0] overflow-hidden">
+                      <img src={url} alt={`Package ${idx + 1}`} className="w-full h-full object-cover" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-6 sm:p-8 text-center text-gray-400">
+                <Image size={24} className="mx-auto mb-2" />
+                <p>No images uploaded for this shipment.</p>
+              </div>
+            )}
+
             {shipment.sender && shipment.recipient && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-6">
@@ -314,16 +338,18 @@ function ShipmentDetailsPage() {
           </div>
 
           <div className="space-y-6">
-            {(shipment.history || shipment.steps) && (
-              <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-6">
-                <h3 className="text-lg font-bold text-[#1A1A2E] mb-4 flex items-center gap-2">
-                  <Clock size={20} className="text-[#2B0071]" />
-                  Shipment History
-                </h3>
+            {/* Timeline / History */}
+            <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-6">
+              <h3 className="text-lg font-bold text-[#1A1A2E] mb-4 flex items-center gap-2">
+                <Clock size={20} className="text-[#2B0071]" />
+                Shipment History
+              </h3>
+              {timelineSteps.length === 0 ? (
+                <p className="text-gray-400 text-sm">No timeline events yet.</p>
+              ) : (
                 <div className="space-y-0">
-                  {(shipment.history || shipment.steps || []).map((step, index) => {
-                    const steps = shipment.history || shipment.steps || [];
-                    const isLast = index === steps.length - 1;
+                  {timelineSteps.map((step, index) => {
+                    const isLast = index === timelineSteps.length - 1;
                     const isCompleted = step.status === 'completed';
                     const isActive = step.status === 'active';
                     const isUpcoming = step.status === 'upcoming';
@@ -354,9 +380,10 @@ function ShipmentDetailsPage() {
                     );
                   })}
                 </div>
-              </div>
-            )}
+              )}
+            </div>
 
+            {/* Fee Breakdown */}
             {shipment.fees && shipment.fees.breakdown && shipment.fees.breakdown.length > 0 && (
               <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-6">
                 <h4 className="text-sm font-bold text-[#1A1A2E] mb-3">Fee Breakdown</h4>
@@ -372,12 +399,15 @@ function ShipmentDetailsPage() {
                     <span>{shipment.fees.total} {shipment.fees.currency}</span>
                   </div>
                   {!shipment.fees.paid && (
-                    <button
-                      onClick={handlePayFees}
-                      className="mt-3 w-full btn-primary text-sm py-2"
+                    <a
+                      href={getWhatsAppLink()}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 w-full inline-flex items-center justify-center gap-2 btn-primary text-sm py-2.5 bg-[#25D366] hover:bg-[#128C7E] border-none"
                     >
-                      Pay Now
-                    </button>
+                      <MessageCircle size={16} />
+                      Contact Support to Make Payment
+                    </a>
                   )}
                 </div>
               </div>

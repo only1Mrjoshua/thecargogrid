@@ -75,6 +75,7 @@ const shipmentSchema = new mongoose.Schema({
     isDangerous: { type: Boolean, default: false },
     description: { type: String },
     category: { type: String },
+    images: { type: [String], default: [] },
   },
   shippingOption: { type: String, enum: ['standard', 'express', 'priority'], default: 'standard' },
   additionalServices: { type: [String], default: [] },

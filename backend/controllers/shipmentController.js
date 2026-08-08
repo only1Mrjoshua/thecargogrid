@@ -458,7 +458,7 @@ export const publicBookShipment = async (req, res, next) => {
       return res.status(400).json({ message: 'Package weight and category are required' });
     }
 
-    // 🔐 Generate a unique tracking number
+    // Generate a unique tracking number
     const generateTracking = () => {
       const random = Math.floor(Math.random() * 10**12).toString().padStart(12, '0');
       return `TCG-${random}`;
@@ -466,7 +466,6 @@ export const publicBookShipment = async (req, res, next) => {
 
     let trackingId;
     let isUnique = false;
-    // Ensure uniqueness (with a simple loop – in production you'd use a more robust method)
     let attempts = 0;
     while (!isUnique && attempts < 10) {
       trackingId = generateTracking();
@@ -478,9 +477,18 @@ export const publicBookShipment = async (req, res, next) => {
       return res.status(500).json({ message: 'Could not generate a unique tracking number. Please try again.' });
     }
 
-    // Build shipment data – now with a pre‑generated `id`
+    // Generate initial timeline steps
+    const initialSteps = [
+      { event: 'Order Received', status: 'completed', date: new Date().toISOString().slice(0, 16).replace('T', ' '), description: 'Shipment created' },
+      { event: 'Processing', status: 'active', date: new Date().toISOString().slice(0, 16).replace('T', ' '), description: 'Booking confirmed' },
+      { event: 'In Transit', status: 'upcoming', date: null, description: 'Awaiting pickup' },
+      { event: 'Out for Delivery', status: 'upcoming', date: null, description: 'Will be dispatched later' },
+      { event: 'Delivered', status: 'upcoming', date: null, description: 'Package will be delivered' },
+    ];
+
+    // Build shipment data
     const shipmentData = {
-      id: trackingId, // ✅ explicitly set the tracking number
+      id: trackingId,
       customer: sender.name,
       email: sender.email,
       phone: sender.phone,
@@ -524,20 +532,11 @@ export const publicBookShipment = async (req, res, next) => {
         paid: false,
         breakdown: quote?.breakdown || [],
       },
-      bookingData: {
-        ...req.body,
-      },
+      bookingData: { ...req.body },
       dateTime: pickupDate && pickupTime ? `${pickupDate}T${pickupTime}` : '',
+      steps: initialSteps,
+      history: initialSteps, // 👈 duplicate for frontend compatibility
     };
-
-    // Generate initial timeline steps
-    shipmentData.steps = [
-      { event: 'Order Received', status: 'completed', date: new Date().toISOString().slice(0, 16).replace('T', ' '), description: 'Shipment created' },
-      { event: 'Processing', status: 'active', date: new Date().toISOString().slice(0, 16).replace('T', ' '), description: 'Booking confirmed' },
-      { event: 'In Transit', status: 'upcoming', date: null, description: 'Awaiting pickup' },
-      { event: 'Out for Delivery', status: 'upcoming', date: null, description: 'Will be dispatched later' },
-      { event: 'Delivered', status: 'upcoming', date: null, description: 'Package will be delivered' },
-    ];
 
     const shipment = await Shipment.create(shipmentData);
 
