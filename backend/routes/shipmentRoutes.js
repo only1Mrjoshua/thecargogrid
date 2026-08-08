@@ -15,7 +15,8 @@ import {
   downloadDocument,
   toggleDocumentAttach,
   getCustomersWithShipments,
-  getPublicShipment,  // ✅ new import
+  getPublicShipment,
+  publicBookShipment, // 👈 new import
 } from '../controllers/shipmentController.js';
 import { protect, authorize } from '../middleware/auth.js';
 
@@ -23,6 +24,7 @@ const router = express.Router();
 
 // ✅ PUBLIC ROUTES – NO AUTH REQUIRED
 router.get('/public/:id', getPublicShipment);
+router.post('/public/book', publicBookShipment); // 👈 new booking route
 
 // ✅ PROTECTED ADMIN ROUTES
 router.use(protect, authorize('admin'));

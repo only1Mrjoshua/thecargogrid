@@ -11,6 +11,7 @@ import invoiceRoutes from './routes/invoiceRoutes.js';
 import receiptRoutes from './routes/receiptRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 import customerRoutes from './routes/customerRoutes.js';
+import uploadRoutes from './routes/uploadRoutes.js';
 // Routes
 import authRoutes from './routes/authRoutes.js';
 
@@ -53,8 +54,8 @@ app.use(helmet({
 }));
 
 // ✅ Increased payload limit for file uploads
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Rate limiting
 const limiter = rateLimit({
@@ -72,6 +73,7 @@ app.use('/api/invoices', invoiceRoutes);
 app.use('/api/receipts', receiptRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/customers', customerRoutes);
+app.use('/api/upload', uploadRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

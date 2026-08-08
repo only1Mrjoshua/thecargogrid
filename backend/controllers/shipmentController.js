@@ -436,3 +436,135 @@ export const getPublicShipment = async (req, res, next) => {
     next(err);
   }
 };
+
+// @desc    Public booking endpoint – create a shipment from frontend form
+// @route   POST /api/shipments/public/book
+// @access  Public
+export const publicBookShipment = async (req, res, next) => {
+  try {
+    const {
+      sender, receiver, package: pkg, shippingOption, additionalServices,
+      quote, pickupDate, pickupTime
+    } = req.body;
+
+    // Validate required sender info
+    if (!sender?.name || !sender?.email || !sender?.phone || !sender?.address) {
+      return res.status(400).json({ message: 'Sender information is required' });
+    }
+    if (!receiver?.name || !receiver?.email || !receiver?.phone || !receiver?.address) {
+      return res.status(400).json({ message: 'Receiver information is required' });
+    }
+    if (!pkg?.weight || !pkg?.category) {
+      return res.status(400).json({ message: 'Package weight and category are required' });
+    }
+
+    // 🔐 Generate a unique tracking number
+    const generateTracking = () => {
+      const random = Math.floor(Math.random() * 10**12).toString().padStart(12, '0');
+      return `TCG-${random}`;
+    };
+
+    let trackingId;
+    let isUnique = false;
+    // Ensure uniqueness (with a simple loop – in production you'd use a more robust method)
+    let attempts = 0;
+    while (!isUnique && attempts < 10) {
+      trackingId = generateTracking();
+      const existing = await Shipment.findOne({ id: trackingId });
+      if (!existing) isUnique = true;
+      attempts++;
+    }
+    if (!isUnique) {
+      return res.status(500).json({ message: 'Could not generate a unique tracking number. Please try again.' });
+    }
+
+    // Build shipment data – now with a pre‑generated `id`
+    const shipmentData = {
+      id: trackingId, // ✅ explicitly set the tracking number
+      customer: sender.name,
+      email: sender.email,
+      phone: sender.phone,
+      address: sender.address,
+      origin: sender.address,
+      destination: receiver.address,
+      packageType: pkg.category || 'Standard Parcel',
+      weight: String(pkg.weight),
+      status: 'Order Received',
+      payment: 'Unpaid',
+      date: new Date().toISOString().slice(0, 10),
+      expectedDelivery: quote?.deliveryTime || '2-4 business days',
+      sender: {
+        name: sender.name,
+        email: sender.email,
+        phone: sender.phone,
+        address: sender.address,
+      },
+      receiver: {
+        name: receiver.name,
+        email: receiver.email,
+        phone: receiver.phone,
+        address: receiver.address,
+      },
+      packageDetails: {
+        length: pkg.length || 0,
+        width: pkg.width || 0,
+        height: pkg.height || 0,
+        declaredValue: pkg.declaredValue || 0,
+        isFragile: pkg.isFragile || false,
+        isDangerous: pkg.isDangerous || false,
+        description: pkg.description || '',
+        category: pkg.category || '',
+        images: pkg.images || [],
+      },
+      shippingOption: shippingOption || 'standard',
+      additionalServices: additionalServices || [],
+      fees: {
+        total: quote?.total || 0,
+        currency: quote?.currency || 'USD',
+        paid: false,
+        breakdown: quote?.breakdown || [],
+      },
+      bookingData: {
+        ...req.body,
+      },
+      dateTime: pickupDate && pickupTime ? `${pickupDate}T${pickupTime}` : '',
+    };
+
+    // Generate initial timeline steps
+    shipmentData.steps = [
+      { event: 'Order Received', status: 'completed', date: new Date().toISOString().slice(0, 16).replace('T', ' '), description: 'Shipment created' },
+      { event: 'Processing', status: 'active', date: new Date().toISOString().slice(0, 16).replace('T', ' '), description: 'Booking confirmed' },
+      { event: 'In Transit', status: 'upcoming', date: null, description: 'Awaiting pickup' },
+      { event: 'Out for Delivery', status: 'upcoming', date: null, description: 'Will be dispatched later' },
+      { event: 'Delivered', status: 'upcoming', date: null, description: 'Package will be delivered' },
+    ];
+
+    const shipment = await Shipment.create(shipmentData);
+
+    res.status(201).json({
+      success: true,
+      trackingNumber: shipment.id,
+      shipment: shipment,
+    });
+  } catch (err) {
+    console.error('❌ Booking error details:', err);
+
+    if (err.name === 'ValidationError') {
+      const errors = Object.values(err.errors).map(e => ({
+        field: e.path,
+        message: e.message,
+        value: e.value,
+      }));
+      return res.status(400).json({
+        message: 'Validation failed',
+        errors,
+      });
+    }
+
+    if (err.code === 11000) {
+      return res.status(400).json({ message: 'Tracking number already exists' });
+    }
+
+    next(err);
+  }
+};

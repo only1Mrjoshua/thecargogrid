@@ -1,16 +1,5 @@
 import mongoose from 'mongoose';
 
-// Document subdocument schema
-const documentSchema = new mongoose.Schema({
-  id: { type: String, required: true },
-  name: { type: String, required: true },
-  type: { type: String, default: 'application/pdf' },
-  size: { type: String, default: '' },
-  uploadDate: { type: String, default: () => new Date().toISOString().slice(0, 10) },
-  attached: { type: Boolean, default: false },
-  data: { type: String, default: '' }, // base64 data URL
-});
-
 const shipmentSchema = new mongoose.Schema({
   id: {
     type: String,
@@ -61,8 +50,37 @@ const shipmentSchema = new mongoose.Schema({
   lastUpdated: { type: String, default: () => new Date().toISOString() },
   history: { type: Array, default: [] },
   steps: { type: Array, default: [] },
-  documents: [documentSchema], // 👈 now uses subdocument schema
+  documents: { type: Array, default: [] },
   fees: { type: Object, default: {} },
+
+  // --- NEW FIELDS FOR SHIPPING BOOKING ---
+  sender: {
+    name: { type: String },
+    email: { type: String },
+    phone: { type: String },
+    address: { type: String },
+  },
+  receiver: {
+    name: { type: String },
+    email: { type: String },
+    phone: { type: String },
+    address: { type: String },
+  },
+  packageDetails: {
+    length: { type: Number },
+    width: { type: Number },
+    height: { type: Number },
+    declaredValue: { type: Number },
+    isFragile: { type: Boolean, default: false },
+    isDangerous: { type: Boolean, default: false },
+    description: { type: String },
+    category: { type: String },
+  },
+  shippingOption: { type: String, enum: ['standard', 'express', 'priority'], default: 'standard' },
+  additionalServices: { type: [String], default: [] },
+  bookingData: { type: mongoose.Schema.Types.Mixed, default: {} },
+  // --- END NEW FIELDS ---
+
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
