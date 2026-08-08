@@ -1,4 +1,3 @@
-// src/components/TrackingForm.jsx
 import { Search, Loader2 } from 'lucide-react';
 
 function TrackingForm({
@@ -9,11 +8,12 @@ function TrackingForm({
   isLoading,
   compact = false,
   label = 'Track your package',
+  labelClassName = '',
 }) {
   return (
     <div className="w-full">
       {!compact && (
-        <label htmlFor="tracking-input" className="block text-sm font-semibold text-[#1A1A2E] mb-2">
+        <label htmlFor="tracking-input" className={`block text-sm font-semibold mb-2 ${labelClassName || 'text-[#1A1A2E]'}`}>
           {label}
         </label>
       )}
@@ -76,7 +76,6 @@ function TrackingForm({
           </button>
         </div>
 
-        {/* Error message */}
         {error && (
           <p id="tracking-error" className="mt-2 text-sm text-[#EF4444] flex items-center gap-1.5 animate-slide-down">
             <span className="w-1 h-1 rounded-full bg-[#EF4444]" />

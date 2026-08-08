@@ -1,6 +1,7 @@
 // src/components/TrackingPreview.jsx
 import { useEffect, useRef } from 'react';
 import { MapPin, CheckCircle, Circle, Clock, Truck, Package, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const timelineItems = [
   { label: 'Order Received', status: 'completed' },
@@ -59,10 +60,14 @@ function TrackingPreview() {
     <section ref={sectionRef} className="section-padding bg-[#F8F9FD]" aria-labelledby="preview-heading">
       <div className="container-custom">
         <div className="text-center max-w-2xl mx-auto mb-12 md:mb-16">
-          <span className="label-sm text-[#FF5500] font-semibold block mb-2 reveal">Live Preview</span>
+          <span className="label-sm text-[#FF5500] font-semibold block mb-2 reveal">Always in the Loop</span>
           <h2 id="preview-heading" className="heading-section text-[#1A1A2E] reveal delay-100">
-            Know exactly where <span className="text-[#2B0071]">your shipment stands.</span>
+            Ship with confidence, <span className="text-[#2B0071]">track every mile.</span>
           </h2>
+          <p className="body-text mt-4 reveal delay-200 text-gray-600 max-w-xl mx-auto">
+            When you ship with us, real‑time visibility comes standard. See exactly where your cargo is, 
+            from pickup to final delivery, all from one dashboard.
+          </p>
         </div>
 
         {/* Tracking Card Preview */}
@@ -104,7 +109,6 @@ function TrackingPreview() {
                   const isLast = index === timelineItems.length - 1;
                   return (
                     <div key={item.label} className="flex gap-3">
-                      {/* Left: icon + line */}
                       <div className="flex flex-col items-center flex-shrink-0">
                         <div className="w-6 h-6 flex items-center justify-center">
                           {getStatusIcon(item.status)}
@@ -113,8 +117,6 @@ function TrackingPreview() {
                           <div className={`w-0.5 flex-1 min-h-[28px] ${getStatusLine(item.status)}`} />
                         )}
                       </div>
-
-                      {/* Right: label */}
                       <div className="pb-4 pt-0.5">
                         <span
                           className={`text-sm font-medium ${
@@ -145,10 +147,19 @@ function TrackingPreview() {
           </div>
         </div>
 
-        {/* Note */}
-        <p className="text-center text-xs text-gray-400 mt-6 reveal">
-          This is a preview of your real-time tracking experience
-        </p>
+        {/* CTA + note – primary action to ship, tracking as additional */}
+        <div className="text-center mt-10 reveal flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
+          <Link
+            to="/ship"
+            className="btn-primary inline-flex items-center gap-2 group"
+          >
+            Ship your cargo now
+            <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
+          </Link>
+          <span className="text-sm text-gray-400">
+            Already shipped? <Link to="/track" className="text-[#2B0071] font-semibold hover:text-[#FF5500] transition-colors">Track here</Link>
+          </span>
+        </div>
       </div>
     </section>
   );

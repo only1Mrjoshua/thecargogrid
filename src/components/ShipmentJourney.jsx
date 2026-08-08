@@ -1,47 +1,48 @@
 // src/components/ShipmentJourney.jsx
 import { useEffect, useRef, useState } from 'react';
-import { Package, ClipboardCheck, Truck, ShieldCheck, MapPin, CheckCircle, Circle } from 'lucide-react';
+import { Package, ClipboardCheck, Truck, ShieldCheck, MapPin, CheckCircle, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const stages = [
   {
     id: 'pickup',
     label: 'Pickup',
-    description: 'Package collected from sender',
+    description: 'We collect your cargo from your doorstep',
     icon: Package,
     status: 'completed',
   },
   {
     id: 'processing',
     label: 'Processing',
-    description: 'Shipment sorted and prepared',
+    description: 'We sort, pack, and prepare for transit',
     icon: ClipboardCheck,
     status: 'completed',
   },
   {
     id: 'in-transit',
     label: 'In Transit',
-    description: 'Package is moving to destination',
+    description: 'Your shipment moves via our global network',
     icon: Truck,
     status: 'active',
   },
   {
     id: 'customs',
-    label: 'Customs',
-    description: 'Customs clearance processing',
+    label: 'Customs Clearance',
+    description: 'We handle all customs documentation smoothly',
     icon: ShieldCheck,
     status: 'upcoming',
   },
   {
     id: 'out-for-delivery',
-    label: 'Out for Delivery',
-    description: 'Package is on the final leg',
+    label: 'Final Mile',
+    description: 'Your cargo is on its last leg to you',
     icon: MapPin,
     status: 'upcoming',
   },
   {
     id: 'delivered',
     label: 'Delivered',
-    description: 'Package successfully delivered',
+    description: 'Safely arrived – track every step along the way',
     icon: CheckCircle,
     status: 'upcoming',
   },
@@ -113,12 +114,16 @@ function ShipmentJourney() {
   return (
     <section ref={sectionRef} className="section-padding bg-white" aria-labelledby="journey-heading">
       <div className="container-custom">
-        {/* Header */}
+        {/* Header – now emphasising our shipping service */}
         <div className="text-center max-w-2xl mx-auto mb-14 md:mb-16">
-          <span className="label-sm text-[#FF5500] font-semibold block mb-2 reveal">Shipment Journey</span>
+          <span className="label-sm text-[#FF5500] font-semibold block mb-2 reveal">Shipping Process</span>
           <h2 id="journey-heading" className="heading-section text-[#1A1A2E] reveal delay-100">
-            From pickup to <span className="text-[#2B0071]">your doorstep.</span>
+            We handle every step, <span className="text-[#2B0071]">so you don't have to.</span>
           </h2>
+          <p className="body-text mt-4 reveal delay-200 text-gray-600">
+            From pickup to delivery, your cargo is in safe hands. And you can 
+            <strong className="text-[#2B0071]"> track it in real time</strong> whenever you like.
+          </p>
         </div>
 
         {/* Timeline */}
@@ -219,20 +224,29 @@ function ShipmentJourney() {
             })}
           </div>
 
-          {/* Status indicator */}
-          <div className="text-center mt-10 reveal flex flex-wrap items-center justify-center gap-4 text-xs font-medium text-gray-500">
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#10B981]" />
-              Completed
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#2B0071] ring-2 ring-[#2B0071]/20" />
-              In Progress
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#E2E5F0]" />
-              Upcoming
-            </span>
+          {/* Bottom: Status legend + shipping CTA */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-10 reveal">
+            <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-medium text-gray-500">
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#10B981]" />
+                Completed
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#2B0071] ring-2 ring-[#2B0071]/20" />
+                In Progress
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#E2E5F0]" />
+                Upcoming
+              </span>
+            </div>
+            <Link
+              to="/ship"
+              className="btn-primary inline-flex items-center gap-2 group shrink-0"
+            >
+              Ship your cargo now
+              <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
+            </Link>
           </div>
         </div>
       </div>

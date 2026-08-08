@@ -2,12 +2,12 @@ import { useEffect, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import Stats from '../components/Stats';
-import HowTrackingWorks from '../components/HowTrackingWorks';
-import Services from '../components/Services';
-import ShipSection from '../components/ShipSection'; // new
-import WhyCargoGrid from '../components/WhyCargoGrid';
-import ShipmentJourney from '../components/ShipmentJourney';
-import TrackingPreview from '../components/TrackingPreview';
+import ShipSection from '../components/ShipSection';     // shipping-focused
+import HowTrackingWorks from '../components/HowTrackingWorks'; // now shipping process
+import Services from '../components/Services';          // shipping services
+import WhyCargoGrid from '../components/WhyCargoGrid';  // shipping benefits
+import ShipmentJourney from '../components/ShipmentJourney'; // shipping journey
+import TrackingPreview from '../components/TrackingPreview'; // tracking demo (now lower)
 import SecuritySection from '../components/SecuritySection';
 import SupportCTA from '../components/SupportCTA';
 import Footer from '../components/Footer';
@@ -43,12 +43,12 @@ function Home() {
       <Navbar />
       <Hero />
       <Stats />
-      <HowTrackingWorks />
-      <Services />
-      <ShipSection />          {/* NEW: Shipping section */}
-      <WhyCargoGrid />
-      <ShipmentJourney />
-      <TrackingPreview />
+      <ShipSection />          {/* moved up – shipping first */}
+      <HowTrackingWorks />     {/* now shows shipping process with tracking as a step */}
+      <Services />             {/* shipping services */}
+      <WhyCargoGrid />         {/* shipping benefits */}
+      <ShipmentJourney />      {/* shipping journey timeline */}
+      <TrackingPreview />      {/* tracking demo – now lower down */}
       <SecuritySection />
       <SupportCTA />
       <Footer />

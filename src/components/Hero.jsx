@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapPin, Clock, Package, ChevronRight, ArrowRight } from 'lucide-react';
 import TrackingForm from './TrackingForm';
@@ -8,6 +8,15 @@ function Hero() {
   const [trackingNumber, setTrackingNumber] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [currentImage, setCurrentImage] = useState(0);
+  const images = ['/hero1.jpeg', '/ship.jpg'];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImage((prev) => (prev === 0 ? 1 : 0));
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleTrack = (e) => {
     e.preventDefault();
@@ -28,115 +37,87 @@ function Hero() {
     if (error) setError('');
   };
 
+  // Helper to trigger tracking form submit from the secondary button
+  const handleTrackClick = () => {
+    const form = document.querySelector('form');
+    if (form) form.dispatchEvent(new Event('submit', { cancelable: true }));
+  };
+
   return (
     <section
-      className="relative min-h-[90vh] flex items-center overflow-hidden pt-[72px] bg-[#F8F9FD]"
+      className="relative min-h-[90vh] flex items-center overflow-hidden pt-[72px] bg-[#1A1A2E]"
       aria-labelledby="hero-heading"
     >
-      {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-1/3 h-1/2 bg-[#2B0071]/[0.03] rounded-full blur-3xl -translate-y-1/4 translate-x-1/4 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-1/4 h-1/3 bg-[#FF5500]/[0.04] rounded-full blur-3xl -translate-x-1/4 translate-y-1/4 pointer-events-none" />
+      {/* Background images */}
+      <div className="absolute inset-0 z-0">
+        {images.map((src, index) => (
+          <img
+            key={src}
+            src={src}
+            alt=""
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
+              index === currentImage ? 'opacity-100' : 'opacity-0'
+            }`}
+            aria-hidden="true"
+          />
+        ))}
+        <div className="absolute inset-0 bg-[#1A1A2E]/60 mix-blend-multiply" />
+      </div>
+
+      <div className="absolute top-0 right-0 w-1/3 h-1/2 bg-[#2B0071]/20 rounded-full blur-3xl -translate-y-1/4 translate-x-1/4 pointer-events-none z-0" />
+      <div className="absolute bottom-0 left-0 w-1/4 h-1/3 bg-[#FF5500]/20 rounded-full blur-3xl -translate-x-1/4 translate-y-1/4 pointer-events-none z-0" />
 
       <div className="container-custom relative z-10 w-full">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 xl:gap-20 items-center">
-          {/* Left: Content */}
-          <div className="space-y-6 sm:space-y-8 pt-4 lg:pt-0">
-
-            {/* Heading */}
+          <div className="space-y-6 sm:space-y-8 pt-4 lg:pt-0 text-white">
+            {/* NEW HEADLINE – shipping first */}
             <h1
               id="hero-heading"
-              className="heading-hero text-[#1A1A2E] animate-fade-up delay-100"
+              className="heading-hero text-white animate-fade-up delay-100"
             >
-              Track. Ship. <br />
-              <span className="text-[#2B0071] relative inline-block">
-                Stay in Control.
+              Global Shipping <br />
+              <span className="text-[#FF5500] relative inline-block">
+                Made Simple.
                 <span className="absolute -bottom-1 left-0 right-0 h-1.5 bg-[#FF5500]/30 rounded-full -z-10" />
               </span>
             </h1>
 
-            {/* Description */}
-            <p className="body-text max-w-lg animate-fade-up delay-200">
-              Track your package from dispatch to destination with real‑time updates, 
-              or <strong>ship a package</strong> with a few clicks, get a quote, book, and track, all in one place.
+            {/* NEW SUBTEXT – emphasises shipping, tracking as a bonus */}
+            <p className="body-text text-white/90 max-w-lg animate-fade-up delay-200">
+              Ship your cargo worldwide with ease, compare rates, book in seconds,
+              and <strong className="text-[#FF5500]">track every step</strong> in real time.
             </p>
 
-            {/* Tracking Form */}
-            <div className="animate-fade-up delay-300">
+            {/* PRIMARY CTAs – "Ship a Package" is now the main action */}
+            <div className="flex flex-wrap gap-4 pt-2 animate-fade-up delay-300">
+              <button
+                onClick={() => navigate('/ship')}
+                className="btn-primary group"
+              >
+                Ship a Package
+                <Package size={18} className="ml-2 transition-transform duration-300 group-hover:translate-x-1" />
+              </button>
+              <button
+                onClick={handleTrackClick}
+                className="btn-outline-light group"
+              >
+                Track Package
+                <ArrowRight size={18} className="ml-2 transition-transform duration-300 group-hover:translate-x-1" />
+              </button>
+            </div>
+
+            {/* TRACKING FORM – moved lower and made visually smaller */}
+            <div className="animate-fade-up delay-400 mt-6 max-w-md">
               <TrackingForm
                 trackingNumber={trackingNumber}
                 onTrackingChange={handleInputChange}
                 onSubmit={handleTrack}
                 error={error}
                 isLoading={isLoading}
-                compact={false}
-                label="Track your package"
+                compact={true}                      // smaller appearance
+                label="Or track a shipment"         // less prominent label
+                labelClassName="text-white/80 text-sm"
               />
-            </div>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-4 pt-2 animate-fade-up delay-400">
-              <button
-                onClick={() => {
-                  const form = document.querySelector('form');
-                  if (form) form.dispatchEvent(new Event('submit', { cancelable: true }));
-                }}
-                className="btn-primary group"
-              >
-                Track Package
-                <ArrowRight size={18} className="ml-2 transition-transform duration-300 group-hover:translate-x-1" />
-              </button>
-              <button
-                onClick={() => navigate('/ship')}
-                className="btn-secondary group"
-              >
-                Ship a Package
-                <Package size={18} className="ml-2 transition-transform duration-300 group-hover:translate-x-1" />
-              </button>
-            </div>
-          </div>
-
-          {/* Right: Image Composition */}
-          <div className="relative lg:mt-0 animate-fade-up delay-200">
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-[#2B0071]/10">
-              <img
-                src="/hero-logistics.jpg"
-                alt="The Cargo Grid logistics service — international shipping and cargo delivery"
-                className="w-full h-[320px] sm:h-[380px] md:h-[440px] lg:h-[480px] xl:h-[520px] object-cover"
-                loading="lazy"
-              />
-
-              {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A2E]/20 via-transparent to-transparent pointer-events-none" />
-
-              {/* Floating tracking card */}
-              <div className="absolute bottom-4 left-4 right-4 sm:left-6 sm:right-6 sm:bottom-6 bg-white/95 backdrop-blur-sm rounded-2xl p-4 sm:p-5 shadow-xl border border-white/40 max-w-xs ml-0">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
-                  <span className="text-xs font-semibold text-[#1A1A2E] tracking-wider uppercase">In Transit</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm">
-                  <span className="font-mono font-bold text-[#2B0071]">CG-928374</span>
-                  <span className="text-[#E2E5F0]">|</span>
-                  <span className="flex items-center gap-1 text-gray-600">
-                    <MapPin size={14} className="text-[#FF5500]" />
-                    London → Edinburgh
-                  </span>
-                </div>
-                <div className="mt-2 pt-2 border-t border-[#E2E5F0]/60 flex items-center justify-between text-xs">
-                  <span className="text-gray-500">Est. delivery</span>
-                  <span className="font-semibold text-[#1A1A2E]">Aug 08, 2026</span>
-                </div>
-              </div>
-
-              {/* Floating badges */}
-              <div className="absolute top-4 right-4 bg-[#2B0071]/90 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg">
-                <Clock size={14} className="text-[#FF5500]" />
-                <span>24/7 Tracking</span>
-              </div>
-              <div className="absolute top-4 left-4 bg-[#FF5500]/90 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg">
-                <Package size={14} />
-                <span>Ship Now</span>
-              </div>
             </div>
           </div>
         </div>
