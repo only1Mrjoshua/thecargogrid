@@ -44,6 +44,8 @@ const locationOptions = [
   'Leeds, UK',
 ];
 
+const currencyOptions = ['USD', 'GBP', 'EUR'];
+
 function AdminUpdateShipment() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -57,6 +59,12 @@ function AdminUpdateShipment() {
     dateTime: '',
     nextAction: '',
   });
+  // Customs fee state
+  const [feeAmount, setFeeAmount] = useState('');
+  const [feeCurrency, setFeeCurrency] = useState('USD');
+  const [feePaid, setFeePaid] = useState(false);
+  const [feeDescription, setFeeDescription] = useState('');
+
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
@@ -75,6 +83,18 @@ function AdminUpdateShipment() {
           dateTime: data.dateTime || new Date().toISOString().slice(0, 16),
           nextAction: data.nextAction || '',
         });
+        // Load fee data if exists
+        if (data.fees) {
+          setFeeAmount(data.fees.total !== undefined ? data.fees.total : '');
+          setFeeCurrency(data.fees.currency || 'USD');
+          setFeePaid(data.fees.paid || false);
+          setFeeDescription(data.fees.description || 'Customs processing fee');
+        } else {
+          setFeeAmount('');
+          setFeeCurrency('USD');
+          setFeePaid(false);
+          setFeeDescription('Customs processing fee');
+        }
         setNotFound(false);
       } catch (err) {
         console.error('Error fetching shipment:', err);
@@ -112,6 +132,14 @@ function AdminUpdateShipment() {
         dateTime: formData.dateTime,
         nextAction: formData.nextAction,
         lastUpdated: new Date().toISOString(),
+        // Include fee data
+        fees: {
+          total: parseFloat(feeAmount) || 0,
+          currency: feeCurrency,
+          paid: feePaid,
+          description: feeDescription || 'Customs processing fee',
+          breakdown: shipment.fees?.breakdown || [],
+        },
       };
 
       await api.put(`/shipments/${id}`, updatedData);
@@ -127,6 +155,9 @@ function AdminUpdateShipment() {
       setIsSaving(false);
     }
   };
+
+  // Check if customs-related status
+  const isCustomsStatus = ['Customs Hold', 'Customs Fee Pending'].includes(formData.status);
 
   if (loading) {
     return (
@@ -158,7 +189,7 @@ function AdminUpdateShipment() {
         </div>
         <h3 className="text-xl font-bold text-[#1A1A2E]">Update Successful</h3>
         <p className="text-gray-600 mt-2">
-          Shipment {shipment.id} has been updated. An email notification has been sent to the customer.
+          Shipment {shipment.id} has been updated. {isCustomsStatus && feePaid && 'The customs fee has been marked as paid.'}
         </p>
         <Link to="/admin/shipments" className="mt-6 inline-block btn-primary text-sm py-2 px-6">
           Return to Shipments
@@ -254,6 +285,70 @@ function AdminUpdateShipment() {
             className="w-full px-4 py-2.5 text-sm bg-white border border-[#E2E5F0] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF5500]/20 focus:border-[#FF5500] resize-y"
           />
         </div>
+
+        {/* Customs Fee Section – only shown for customs-related statuses */}
+        {isCustomsStatus && (
+          <div className="border-t border-[#FF5500]/20 pt-4 mt-4">
+            <h3 className="text-sm font-bold text-[#FF5500] uppercase tracking-wider flex items-center gap-2 mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FF5500]" />
+              Customs Fee Management
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-[#1A1A2E] mb-1">Fee Amount</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={feeAmount}
+                  onChange={(e) => setFeeAmount(e.target.value)}
+                  placeholder="0.00"
+                  className="w-full px-4 py-2.5 text-sm bg-white border border-[#E2E5F0] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF5500]/20 focus:border-[#FF5500]"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#1A1A2E] mb-1">Currency</label>
+                <select
+                  value={feeCurrency}
+                  onChange={(e) => setFeeCurrency(e.target.value)}
+                  className="w-full px-4 py-2.5 text-sm bg-white border border-[#E2E5F0] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF5500]/20 focus:border-[#FF5500]"
+                >
+                  {currencyOptions.map((cur) => (
+                    <option key={cur} value={cur}>{cur}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-[#1A1A2E] mb-1">Fee Description</label>
+                <input
+                  type="text"
+                  value={feeDescription}
+                  onChange={(e) => setFeeDescription(e.target.value)}
+                  placeholder="Customs processing fee"
+                  className="w-full px-4 py-2.5 text-sm bg-white border border-[#E2E5F0] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF5500]/20 focus:border-[#FF5500]"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="flex items-center gap-2 text-sm font-medium text-[#1A1A2E] cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={feePaid}
+                    onChange={(e) => setFeePaid(e.target.checked)}
+                    className="w-4 h-4 accent-[#10B981] rounded border-[#E2E5F0]"
+                  />
+                  Fee Paid
+                  {feePaid && (
+                    <span className="text-xs text-[#10B981] bg-[#10B981]/10 px-2 py-0.5 rounded-full">
+                      Marked as Paid
+                    </span>
+                  )}
+                </label>
+                <p className="text-xs text-gray-400 mt-1">
+                  Marking the fee as paid will update the shipment record. The customer will still be able to see the payment status on their tracking page.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="bg-[#F8F9FD] rounded-xl p-4 text-sm text-gray-600 border border-[#E2E5F0]">
           <div className="flex items-start gap-2">
