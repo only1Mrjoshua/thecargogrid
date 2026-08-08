@@ -3,7 +3,8 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import {
   MapPin, Calendar, Package, User, Mail, Phone,
   FileText, CreditCard, MessageCircle, ArrowLeft, Download,
-  CheckCircle, Circle, AlertCircle, Clock, Info, Image
+  CheckCircle, Circle, AlertCircle, Clock, Info, Image,
+  X, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { publicApi } from '../api/publicApi';
 import { isCustomsStatus } from '../utils/helpers';
@@ -35,6 +36,10 @@ function ShipmentDetailsPage() {
   const [notFound, setNotFound] = useState(false);
   const [error, setError] = useState('');
 
+  // Lightbox state
+  const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+  const [images, setImages] = useState([]);
+
   useEffect(() => {
     if (tracking) {
       const fetchShipment = async () => {
@@ -44,10 +49,10 @@ function ShipmentDetailsPage() {
         try {
           const response = await publicApi.get(`/shipments/public/${tracking}`);
           const data = response.data.shipment;
-          console.log('📦 Shipment data:', data);
-          console.log('🖼️ packageDetails:', data.packageDetails);
-          console.log('🖼️ images array:', data.packageDetails?.images);
           setShipment(data);
+          // Extract images
+          const imgArray = data.packageDetails?.images || [];
+          setImages(imgArray);
         } catch (err) {
           if (err.response?.status === 404) {
             setNotFound(true);
@@ -64,6 +69,22 @@ function ShipmentDetailsPage() {
       setLoading(false);
     }
   }, [tracking]);
+
+  // Keyboard navigation for lightbox
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (selectedImageIndex === null) return;
+      if (e.key === 'Escape') {
+        setSelectedImageIndex(null);
+      } else if (e.key === 'ArrowLeft') {
+        prevImage();
+      } else if (e.key === 'ArrowRight') {
+        nextImage();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedImageIndex, images]);
 
   const goBack = () => navigate(-1);
   const goToTrack = () => navigate('/track');
@@ -86,6 +107,25 @@ function ShipmentDetailsPage() {
       `Hello The Cargo Grid,\n\nI would like to pay the outstanding fees for shipment ${shipment.id || shipment.trackingNumber}.\n\nPlease guide me on how to complete the payment.\n\nThank you.`
     );
     return `https://wa.me/15123255688?text=${message}`;
+  };
+
+  // Lightbox navigation
+  const openLightbox = (index) => {
+    setSelectedImageIndex(index);
+  };
+
+  const closeLightbox = () => {
+    setSelectedImageIndex(null);
+  };
+
+  const nextImage = () => {
+    if (selectedImageIndex === null) return;
+    setSelectedImageIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const prevImage = () => {
+    if (selectedImageIndex === null) return;
+    setSelectedImageIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
   if (loading) {
@@ -126,8 +166,6 @@ function ShipmentDetailsPage() {
   }
 
   const statusInfo = getStatusInfo(shipment.status);
-
-  // Determine the timeline steps
   const timelineSteps = shipment.history || shipment.steps || [];
 
   return (
@@ -250,16 +288,20 @@ function ShipmentDetailsPage() {
               </div>
             </div>
 
-            {/* Package Images */}
-            {shipment.packageDetails?.images?.length > 0 ? (
+            {/* Package Images with clickable thumbnails */}
+            {images.length > 0 ? (
               <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-6 sm:p-8">
                 <h3 className="text-lg font-bold text-[#1A1A2E] mb-4 flex items-center gap-2">
                   <Image size={20} className="text-[#2B0071]" />
                   Package Images
                 </h3>
                 <div className="flex flex-wrap gap-3">
-                  {shipment.packageDetails.images.map((url, idx) => (
-                    <div key={idx} className="w-24 h-24 rounded-lg border border-[#E2E5F0] overflow-hidden">
+                  {images.map((url, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => openLightbox(idx)}
+                      className="w-24 h-24 rounded-lg border border-[#E2E5F0] overflow-hidden cursor-pointer hover:shadow-lg transition-shadow hover:scale-105 transform duration-200"
+                    >
                       <img src={url} alt={`Package ${idx + 1}`} className="w-full h-full object-cover" />
                     </div>
                   ))}
@@ -338,7 +380,6 @@ function ShipmentDetailsPage() {
           </div>
 
           <div className="space-y-6">
-            {/* Timeline / History */}
             <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-6">
               <h3 className="text-lg font-bold text-[#1A1A2E] mb-4 flex items-center gap-2">
                 <Clock size={20} className="text-[#2B0071]" />
@@ -383,7 +424,6 @@ function ShipmentDetailsPage() {
               )}
             </div>
 
-            {/* Fee Breakdown */}
             {shipment.fees && shipment.fees.breakdown && shipment.fees.breakdown.length > 0 && (
               <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-6">
                 <h4 className="text-sm font-bold text-[#1A1A2E] mb-3">Fee Breakdown</h4>
@@ -415,6 +455,60 @@ function ShipmentDetailsPage() {
           </div>
         </div>
       </div>
+
+      {/* ----- LIGHTBOX MODAL ----- */}
+      {selectedImageIndex !== null && images.length > 0 && (
+        <div
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center animate-fade-in"
+          onClick={closeLightbox}
+        >
+          {/* Close button */}
+          <button
+            onClick={closeLightbox}
+            className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors p-2"
+            aria-label="Close"
+          >
+            <X size={32} />
+          </button>
+
+          {/* Image counter */}
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 text-white/50 text-sm">
+            {selectedImageIndex + 1} / {images.length}
+          </div>
+
+          {/* Main image */}
+          <div
+            className="max-w-[90vw] max-h-[90vh] flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={images[selectedImageIndex]}
+              alt={`Package ${selectedImageIndex + 1}`}
+              className="max-w-[90vw] max-h-[85vh] object-contain rounded-lg"
+            />
+          </div>
+
+          {/* Navigation buttons – only show if more than 1 image */}
+          {images.length > 1 && (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white transition-colors p-2 bg-black/20 hover:bg-black/40 rounded-full"
+                aria-label="Previous image"
+              >
+                <ChevronLeft size={36} />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white transition-colors p-2 bg-black/20 hover:bg-black/40 rounded-full"
+                aria-label="Next image"
+              >
+                <ChevronRight size={36} />
+              </button>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }
