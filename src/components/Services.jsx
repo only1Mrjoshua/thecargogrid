@@ -87,6 +87,14 @@ function Services() {
               delay={index * 80 + 200}
             />
           ))}
+
+<div className="reveal rounded-xl overflow-hidden lg:col-span-2">
+  <img
+    src="/truck.jpeg"
+    alt="Cargo truck"
+    className="w-full h-[312px] object-cover"
+  />
+</div>
         </div>
       </div>
     </section>
