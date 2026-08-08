@@ -71,14 +71,12 @@ function ShipSection() {
 
           {/* Right image */}
           <div className="order-1 lg:order-2 reveal delay-200">
-            <div className="bg-[#2B0071]/5 rounded-2xl p-6 border border-[#E2E5F0]">
-              <img
-                src="/hero2.jpeg"
-                alt="The Cargo Grid shipping and logistics facility"
-                className="w-full h-[280px] object-cover rounded-xl shadow-lg"
-                loading="lazy"
-              />
-            </div>
+            <img
+              src="/hero2.jpeg"
+              alt="The Cargo Grid shipping and logistics facility"
+              className="w-full h-[280px] object-cover rounded-2xl shadow-md"
+              loading="lazy"
+            />
           </div>
         </div>
       </div>
