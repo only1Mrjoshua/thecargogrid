@@ -1,5 +1,4 @@
-// src/components/Hero.jsx
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapPin, Clock, Package, ChevronRight, ArrowRight } from 'lucide-react';
 import TrackingForm from './TrackingForm';
@@ -12,16 +11,12 @@ function Hero() {
 
   const handleTrack = (e) => {
     e.preventDefault();
-
     if (!trackingNumber.trim()) {
       setError('Please enter your tracking number.');
       return;
     }
-
     setError('');
     setIsLoading(true);
-
-    // Simulate a brief loading state
     setTimeout(() => {
       setIsLoading(false);
       navigate(`/track?tracking=${encodeURIComponent(trackingNumber.trim())}`);
@@ -52,8 +47,7 @@ function Hero() {
               id="hero-heading"
               className="heading-hero text-[#1A1A2E] animate-fade-up delay-100"
             >
-              Track Your Shipment.
-              <br />
+              Track. Ship. <br />
               <span className="text-[#2B0071] relative inline-block">
                 Stay in Control.
                 <span className="absolute -bottom-1 left-0 right-0 h-1.5 bg-[#FF5500]/30 rounded-full -z-10" />
@@ -62,8 +56,8 @@ function Hero() {
 
             {/* Description */}
             <p className="body-text max-w-lg animate-fade-up delay-200">
-              Track your package from dispatch to destination with real-time shipment updates,
-              transparent delivery milestones, and secure notifications every step of the way.
+              Track your package from dispatch to destination with real‑time updates, 
+              or <strong>ship a package</strong> with a few clicks, get a quote, book, and track, all in one place.
             </p>
 
             {/* Tracking Form */}
@@ -75,6 +69,7 @@ function Hero() {
                 error={error}
                 isLoading={isLoading}
                 compact={false}
+                label="Track your package"
               />
             </div>
 
@@ -91,10 +86,11 @@ function Hero() {
                 <ArrowRight size={18} className="ml-2 transition-transform duration-300 group-hover:translate-x-1" />
               </button>
               <button
-                onClick={() => navigate('/services')}
-                className="btn-secondary"
+                onClick={() => navigate('/ship')}
+                className="btn-secondary group"
               >
-                Explore Our Services
+                Ship a Package
+                <Package size={18} className="ml-2 transition-transform duration-300 group-hover:translate-x-1" />
               </button>
             </div>
           </div>
@@ -109,7 +105,7 @@ function Hero() {
                 loading="lazy"
               />
 
-              {/* Gradient overlay for text readability */}
+              {/* Gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A2E]/20 via-transparent to-transparent pointer-events-none" />
 
               {/* Floating tracking card */}
@@ -119,7 +115,7 @@ function Hero() {
                   <span className="text-xs font-semibold text-[#1A1A2E] tracking-wider uppercase">In Transit</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm">
-                  <span className="font-mono font-bold text-[#2B0071]">TCG-928374123456</span>
+                  <span className="font-mono font-bold text-[#2B0071]">CG-928374</span>
                   <span className="text-[#E2E5F0]">|</span>
                   <span className="flex items-center gap-1 text-gray-600">
                     <MapPin size={14} className="text-[#FF5500]" />
@@ -132,14 +128,15 @@ function Hero() {
                 </div>
               </div>
 
-              {/* Floating badge - top right */}
+              {/* Floating badges */}
               <div className="absolute top-4 right-4 bg-[#2B0071]/90 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg">
                 <Clock size={14} className="text-[#FF5500]" />
                 <span>24/7 Tracking</span>
               </div>
-
-              {/* Small decorative element */}
-              <div className="absolute -bottom-3 -right-3 w-20 h-20 bg-[#FF5500]/10 rounded-full blur-2xl pointer-events-none" />
+              <div className="absolute top-4 left-4 bg-[#FF5500]/90 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg">
+                <Package size={14} />
+                <span>Ship Now</span>
+              </div>
             </div>
           </div>
         </div>

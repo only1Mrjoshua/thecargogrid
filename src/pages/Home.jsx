@@ -1,10 +1,10 @@
-// src/pages/Home.jsx
 import { useEffect, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
 import Stats from '../components/Stats';
 import HowTrackingWorks from '../components/HowTrackingWorks';
 import Services from '../components/Services';
+import ShipSection from '../components/ShipSection'; // new
 import WhyCargoGrid from '../components/WhyCargoGrid';
 import ShipmentJourney from '../components/ShipmentJourney';
 import TrackingPreview from '../components/TrackingPreview';
@@ -15,7 +15,6 @@ import Footer from '../components/Footer';
 function Home() {
   const mainRef = useRef(null);
 
-  // Scroll reveal using Intersection Observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -46,6 +45,7 @@ function Home() {
       <Stats />
       <HowTrackingWorks />
       <Services />
+      <ShipSection />          {/* NEW: Shipping section */}
       <WhyCargoGrid />
       <ShipmentJourney />
       <TrackingPreview />
