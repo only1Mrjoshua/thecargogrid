@@ -9,11 +9,9 @@ import { publicApi } from '../api/publicApi';
 
 // Helper to extract customs hold data from a shipment
 const extractCustomsData = (shipment) => {
-  // If shipment has customs hold status
   const isCustomsHold = shipment.status === 'Customs Hold' || shipment.status === 'Customs Fee Pending';
   if (!isCustomsHold) return null;
 
-  // Build customs data from shipment fields (fallback to defaults)
   return {
     trackingNumber: shipment.id || shipment.trackingNumber || '',
     status: shipment.status,
@@ -30,8 +28,8 @@ const extractCustomsData = (shipment) => {
     ],
     fee: shipment.fees ? {
       amount: shipment.fees.total || 0,
-      currency: shipment.fees.currency || 'USD',
-      description: 'Customs processing fee',
+      currency: shipment.fees.currency || 'GBP',
+      description: shipment.fees.description || 'Customs processing fee',
       paid: shipment.fees.paid || false
     } : null,
     contactSupport: true,
@@ -57,11 +55,9 @@ function CustomsHoldPage() {
         try {
           const response = await publicApi.get(`/shipments/public/${tracking}`);
           const data = response.data.shipment;
-          // Check if it's a customs hold
           if (data.status === 'Customs Hold' || data.status === 'Customs Fee Pending') {
             setShipment(data);
           } else {
-            // Not a customs hold – show error
             setError('This shipment is not currently on customs hold.');
             setNotFound(true);
           }
@@ -134,10 +130,8 @@ function CustomsHoldPage() {
     );
   }
 
-  // Extract customs data from the shipment
   const customsData = extractCustomsData(shipment);
   if (!customsData) {
-    // Fallback – should not happen because we already checked status
     return (
       <div className="min-h-screen bg-[#F8F9FD] pt-[72px] flex items-center justify-center">
         <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-8 max-w-md text-center">
@@ -163,7 +157,7 @@ function CustomsHoldPage() {
         </button>
 
         <div className="max-w-4xl mx-auto space-y-8">
-          {/* REDESIGNED HEADER CARD */}
+          {/* Header Card – unchanged */}
           <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-6 sm:p-8">
             <div className="flex flex-col sm:flex-row sm:items-start gap-4">
               <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#FF5500]/10 flex items-center justify-center text-[#FF5500]">
@@ -185,7 +179,7 @@ function CustomsHoldPage() {
             </div>
           </div>
 
-          {/* Details grid */}
+          {/* Details grid – unchanged */}
           <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-6 sm:p-8">
             <h2 className="text-lg font-bold text-[#1A1A2E] mb-4 flex items-center gap-2">
               <Info size={20} className="text-[#2B0071]" />
@@ -221,7 +215,7 @@ function CustomsHoldPage() {
             </div>
           </div>
 
-          {/* Documents */}
+          {/* Documents – unchanged */}
           <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-6 sm:p-8">
             <h3 className="text-lg font-bold text-[#1A1A2E] mb-4 flex items-center gap-2">
               <FileText size={20} className="text-[#2B0071]" />
@@ -265,9 +259,9 @@ function CustomsHoldPage() {
             </div>
           </div>
 
-          {/* Fee and Actions */}
+          {/* Fee and Actions – UPDATED with WhatsApp */}
           <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
-            {/* Fee card with payment links */}
+            {/* Fee card – WhatsApp payment contact */}
             <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-6">
               <h4 className="text-sm font-bold text-[#1A1A2E] mb-3">Fee Information</h4>
               {customsData.fee ? (
@@ -278,14 +272,6 @@ function CustomsHoldPage() {
                       <span className="font-bold text-lg">
                         {customsData.fee.amount} {customsData.fee.currency}
                       </span>
-                      {!customsData.fee.paid && (
-                        <button
-                          onClick={() => navigate(`/payment?tracking=${encodeURIComponent(tracking)}`)}
-                          className="text-xs font-semibold text-[#FF5500] hover:text-[#2B0071] transition-colors flex items-center gap-0.5"
-                        >
-                          Pay now
-                        </button>
-                      )}
                     </div>
                   </div>
                   <div className="mt-2 text-xs text-gray-400">
@@ -295,18 +281,20 @@ function CustomsHoldPage() {
                       </span>
                     ) : (
                       <span className="text-[#FF5500] flex items-center gap-1">
-                        <AlertTriangle size={14} /> Unpaid – payment required for release
+                        <AlertTriangle size={14} /> Unpaid – contact support to make payment
                       </span>
                     )}
                   </div>
                   {!customsData.fee.paid && (
-                    <button
-                      onClick={() => navigate(`/payment?tracking=${encodeURIComponent(tracking)}`)}
-                      className="mt-3 w-full btn-primary text-sm py-2.5 flex items-center justify-center gap-2"
+                    <a
+                      href="https://wa.me/15123255688?text=Hello%20The%20Cargo%20Grid%2C%20I%20need%20help%20with%20payment%20for%20shipment%20"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 w-full inline-flex items-center justify-center gap-2 btn-primary text-sm py-2.5 bg-[#25D366] hover:bg-[#128C7E] border-none"
                     >
-                      <CreditCard size={16} />
-                      Pay Fee Now
-                    </button>
+                      <MessageCircle size={16} />
+                      Contact Support to Make Payment
+                    </a>
                   )}
                 </div>
               ) : (
@@ -315,7 +303,7 @@ function CustomsHoldPage() {
             </div>
           </div>
 
-          {/* Next steps */}
+          {/* Next steps – unchanged */}
           <div className="bg-[#F8F9FD] rounded-2xl border border-[#E2E5F0] p-6 text-sm text-gray-600">
             <p className="font-medium text-[#1A1A2E]">Next steps:</p>
             <p>{customsData.nextSteps}</p>
