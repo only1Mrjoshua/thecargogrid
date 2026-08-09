@@ -234,8 +234,8 @@ function ContactPage() {
                     <Phone size={18} className="text-[#2B0071] flex-shrink-0 mt-0.5" />
                     <div>
                       <p className="font-medium text-[#1A1A2E]">Phone</p>
-                      <a href="tel:+448005550199" className="text-gray-600 hover:text-[#2B0071] transition-colors">
-                        +44 800 555 0199
+                      <a href="tel:+15123255688" className="text-gray-600 hover:text-[#2B0071] transition-colors">
+                        +1 512 325 5688
                       </a>
                     </div>
                   </div>
