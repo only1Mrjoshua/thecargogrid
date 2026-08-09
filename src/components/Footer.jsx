@@ -61,11 +61,7 @@ function Footer() {
                 </p>
                 <p className="flex items-center gap-2.5">
                   <Phone size={16} className="text-[#FF5500] flex-shrink-0" />
-                  <span>+44 800 555 0199</span>
-                </p>
-                <p className="flex items-center gap-2.5">
-                  <MapPin size={16} className="text-[#FF5500] flex-shrink-0" />
-                  <span>123 Logistics Ave, London, EC1A 1BB</span>
+                  <span>+1 512 325 5688</span>
                 </p>
               </div>
             </div>
@@ -150,7 +146,7 @@ function Footer() {
 
         {/* Bottom bar */}
         <div className="py-6 flex flex-col sm:flex-row items-center justify-center text-sm text-white/40">
-          <p>&copy; {currentYear} The Cargo Grid. All rights reserved.</p>
+          <p>&copy; 1995-{currentYear} The Cargo Grid. All rights reserved.</p>
         </div>
       </div>
     </footer>
