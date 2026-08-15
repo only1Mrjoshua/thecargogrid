@@ -13,9 +13,9 @@ dns.setServers(['8.8.8.8', '1.1.1.1']);
 // Production → https://thecargogrid.com
 // Override with IMAGE_BASE_URL environment variable if needed.
 const IMAGE_BASE_URL = process.env.IMAGE_BASE_URL || 
-  (process.env.NODE_ENV === 'production' 
+  (process.env.NODE_ENV === 'development' 
     ? 'https://thecargogrid.com' 
-    : 'http://localhost:3000');   // ✅ frontend dev server
+    : 'http://localhost:3000');
 
 // ─── Helper to generate a random tracking number ──────────────────
 const generateTracking = () => {
@@ -100,14 +100,14 @@ const seedShipment = async () => {
       destination: 'Sydney, Australia',
 
       status: 'In Transit',
-      payment: 'Unpaid',
+      payment: 'Paid',                     // ✅ Updated to Paid
       date: '2026-08-11',
       expectedDelivery: '2026-08-30',
 
       weight: '1900 kg',
       packageType: 'Freight - Vehicle & Safe Box',
       location: 'In transit – departed Los Angeles today, en route to Sydney',
-      description: 'High-value international freight: Audi Q5 2025 with secured safe box containing cash and jewelries. Los Angeles, USA to Sydney, Australia. Payment pending.',
+      description: 'High-value international freight: Audi Q5 2025 with secured safe box containing cash and jewelries. Los Angeles, USA to Sydney, Australia. Payment completed.',
       dateTime: new Date().toISOString(),
 
       steps: steps,
@@ -125,7 +125,7 @@ const seedShipment = async () => {
       fees: {
         total: 6300.00,
         currency: 'USD',
-        paid: false,
+        paid: true,                       // ✅ Updated to true
         breakdown: [
           { label: 'International Freight (Vehicle + Safe Box)', amount: 4000.00 },
           { label: 'Special Handling & Security Escort', amount: 1500.00 },
@@ -133,7 +133,7 @@ const seedShipment = async () => {
         ]
       },
 
-      specialInstructions: 'Enclosed container required. High-value security escort. Anti-theft seals. Do not stack. Customs clearance documents must be pre-submitted. Destination: Sydney, Australia – hold for collection or local delivery arrangement. Payment outstanding – $6,300.00 USD due.'
+      specialInstructions: 'Enclosed container required. High-value security escort. Anti-theft seals. Do not stack. Customs clearance documents must be pre-submitted. Destination: Sydney, Australia – hold for collection or local delivery arrangement. Payment completed.'
     };
 
     const result = await Shipment.create(shipment);

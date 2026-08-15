@@ -236,25 +236,11 @@ function ShipmentDocumentsPage() {
                     {/* Actions */}
                     <div className="w-40 flex items-center justify-end gap-2 flex-nowrap">
                       <button
-                        onClick={() => handleView(doc)}
-                        className="p-2 text-[#2B0071]/60 hover:text-[#2B0071] transition-colors rounded-lg hover:bg-[#2B0071]/5"
-                        aria-label={`View ${doc.name}`}
-                      >
-                        <Eye size={16} />
-                      </button>
-                      <button
                         onClick={() => handleDownload(doc)}
                         className="p-2 text-[#2B0071]/60 hover:text-[#2B0071] transition-colors rounded-lg hover:bg-[#2B0071]/5"
                         aria-label={`Download ${doc.name}`}
                       >
                         <Download size={16} />
-                      </button>
-                      <button
-                        onClick={() => handlePrint(doc)}
-                        className="p-2 text-[#2B0071]/60 hover:text-[#2B0071] transition-colors rounded-lg hover:bg-[#2B0071]/5"
-                        aria-label={`Print ${doc.name}`}
-                      >
-                        <Printer size={16} />
                       </button>
                     </div>
                   </div>

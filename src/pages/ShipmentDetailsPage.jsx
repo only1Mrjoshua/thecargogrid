@@ -93,8 +93,11 @@ function ShipmentDetailsPage() {
     alert(`Downloading ${docName} (demo)`);
   };
 
+  // Contact support via WhatsApp
   const handleContactSupport = () => {
-    alert('Opening support chat (demo)');
+    const phone = '15123255688';
+    const message = encodeURIComponent('Hello, I need support regarding my shipment.');
+    window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
   };
 
   const handleViewDocuments = () => {
@@ -208,13 +211,7 @@ function ShipmentDetailsPage() {
                 <FileText size={16} />
                 View Documents
               </button>
-              <button
-                onClick={() => handleDownload(shipment.documents?.[0]?.name || 'document')}
-                className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-[#2B0071] bg-[#2B0071]/5 rounded-lg hover:bg-[#2B0071]/10 transition-colors"
-              >
-                <Download size={16} />
-                Download Docs
-              </button>
+              {/* Download Docs button removed */}
               <button
                 onClick={handleContactSupport}
                 className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-[#1A1A2E] border border-[#E2E5F0] rounded-lg hover:bg-[#F8F9FD] transition-colors"
@@ -359,22 +356,9 @@ function ShipmentDetailsPage() {
                         <span className="font-medium text-sm">{doc.name}</span>
                         {doc.required && <span className="text-xs text-[#FF5500] bg-[#FF5500]/10 px-2 py-0.5 rounded-full">Required</span>}
                       </div>
-                      <button
-                        onClick={() => handleDownload(doc.name)}
-                        className="text-xs font-medium text-[#2B0071] hover:text-[#FF5500] transition-colors"
-                      >
-                        Download
-                      </button>
                     </div>
                   ))}
                 </div>
-                <button
-                  onClick={handleViewDocuments}
-                  className="mt-4 text-sm font-medium text-[#2B0071] hover:text-[#FF5500] transition-colors flex items-center gap-1"
-                >
-                  <Info size={14} />
-                  View required documents
-                </button>
               </div>
             )}
           </div>

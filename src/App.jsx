@@ -28,6 +28,8 @@ import AdminInvoices from './pages/admin/AdminInvoices';
 import AdminReceipts from './pages/admin/AdminReceipts';
 import AdminNotifications from './pages/admin/AdminNotifications';
 import AdminCustomers from './pages/admin/AdminCustomers';
+// ✨ NEW: Import Receipt component
+import Receipt from './pages/Receipt';
 
 function App() {
   return (
@@ -48,6 +50,8 @@ function App() {
             <Route path="/privacy" element={<PrivacyPolicyPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/ship" element={<ShipPage />} />
+            {/* ✨ NEW: Receipt route */}
+            <Route path="/receipt/:trackingId" element={<Receipt />} />
 
             {/* Admin Login */}
             <Route path="/admin/login" element={<AdminLogin />} />
@@ -72,8 +76,6 @@ function App() {
               <Route path="receipts" element={<AdminReceipts />} />
               <Route path="notifications" element={<AdminNotifications />} />
               <Route path="users" element={<AdminCustomers />} />
-              <Route path="tracking" element={<div className="text-center py-12 text-gray-500">Live Tracking (Coming Soon)</div>} />
-              <Route path="settings" element={<div className="text-center py-12 text-gray-500">Admin Settings (Coming Soon)</div>} />
             </Route>
           </Routes>
         </AuthProvider>
