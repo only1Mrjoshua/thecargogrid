@@ -158,7 +158,6 @@ const seedSpecificShipment = async () => {
         isDangerous: false,
         description: '1x Glass Flower, 1x Pets Box of Toys, 1x Pets Bed and Towels, 1x Designer Handbag',
         category: 'Mixed',
-        // ─── UPDATED IMAGES ARRAY ──────────────────────────────────────
         images: [
           `${IMAGE_BASE_URL}/glass-flower.jpeg`,
           `${IMAGE_BASE_URL}/pet-toys.jpeg`,
@@ -168,14 +167,15 @@ const seedSpecificShipment = async () => {
         ]
       },
 
+      // ─── UPDATED FEES ($480) ────────────────────────────────────────
       fees: {
-        total: 250.00,
+        total: 480.00,
         currency: 'USD',
         paid: true,
         breakdown: [
-          { label: 'International Freight', amount: 150.00 },
-          { label: 'Fragile Handling', amount: 50.00 },
-          { label: 'Insurance Premium', amount: 50.00 }
+          { label: 'International Freight', amount: 300.00 },
+          { label: 'Fragile Handling & Packaging', amount: 80.00 },
+          { label: 'Insurance Premium (High-Value)', amount: 100.00 }
         ]
       },
 
@@ -186,6 +186,7 @@ const seedSpecificShipment = async () => {
     console.log(`✅ Created shipment: ${result.id} | ${result.customer} | Status: ${result.status}`);
     console.log(`📦 Timeline events added: ${result.steps.length}`);
     console.log(`📸 Images added: ${result.packageDetails.images.length}`);
+    console.log(`💰 Total Fees: $${result.fees.total}`);
 
     await mongoose.disconnect();
     console.log('🔌 Disconnected from MongoDB');
