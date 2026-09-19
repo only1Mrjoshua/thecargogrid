@@ -61,7 +61,7 @@ function Footer() {
                 </p>
                 <p className="flex items-center gap-2.5">
                   <Phone size={16} className="text-[#FF5500] flex-shrink-0" />
-                  <span>+1 512 325 5688</span>
+                  <span>+44 7473954435</span>
                 </p>
               </div>
             </div>
