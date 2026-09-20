@@ -8,11 +8,9 @@ dotenv.config();
 dns.setDefaultResultOrder('ipv4first');
 dns.setServers(['8.8.8.8', '1.1.1.1']);
 
-// Dynamic image base URL (matching your original script)
-const IMAGE_BASE_URL = process.env.IMAGE_BASE_URL || 
-  (process.env.NODE_ENV === 'development' 
-    ? 'https://thecargogrid.com' 
-    : 'http://localhost:3000');
+// ─── HARDCODED PRODUCTION URL ────────────────────────────────────────
+// This forces the script to use the live domain regardless of .env
+const IMAGE_BASE_URL = 'https://thecargogrid.com';
 
 const generateTracking = () => {
   const randomDigits = String(Math.floor(100000000000 + Math.random() * 900000000000));
@@ -23,6 +21,7 @@ const seedSpecificShipment = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log('✅ Connected to MongoDB');
+    console.log(`📸 Forcing image base URL: ${IMAGE_BASE_URL}`);
 
     // ─── Detailed Timeline Steps ──────────────────────────────────────
     const steps = [
@@ -77,7 +76,7 @@ const seedSpecificShipment = async () => {
       },
       {
         event: 'Leaving from departure country/region',
-        status: 'active', // Marked as active since this is the most recent event
+        status: 'active', 
         description: 'Shipment is leaving the departure country and en route to destination.',
         date: '2026-09-19 21:23:00',
         location: 'Colombo, Sri Lanka'
@@ -109,7 +108,6 @@ const seedSpecificShipment = async () => {
     const shipment = {
       id: generateTracking(),
 
-      // Sender
       sender: {
         name: 'Ramos H Adrian',
         email: 'ramos.adrian@example.com',
@@ -117,7 +115,6 @@ const seedSpecificShipment = async () => {
         address: '123 Galle Road, Colombo, Sri Lanka'
       },
       
-      // Receiver
       receiver: {
         name: 'Dorothy Guillott',
         email: 'dorothy.guillott@example.com',
@@ -125,7 +122,6 @@ const seedSpecificShipment = async () => {
         address: '456 Bourbon Street, New Orleans, Louisiana, USA'
       },
 
-      // Flat fields (backward compatibility)
       customer: 'Ramos H Adrian',
       email: 'ramos.adrian@example.com',
       phone: '+94 77 123 4567',
@@ -158,6 +154,7 @@ const seedSpecificShipment = async () => {
         isDangerous: false,
         description: '1x Glass Flower, 1x Pets Box of Toys, 1x Pets Bed and Towels, 1x Designer Handbag',
         category: 'Mixed',
+        // Now hardcoded to use the production domain
         images: [
           `${IMAGE_BASE_URL}/glass-flower.jpeg`,
           `${IMAGE_BASE_URL}/pet-toys.jpeg`,
@@ -167,7 +164,6 @@ const seedSpecificShipment = async () => {
         ]
       },
 
-      // ─── UPDATED FEES ($480) ────────────────────────────────────────
       fees: {
         total: 480.00,
         currency: 'USD',
@@ -184,9 +180,10 @@ const seedSpecificShipment = async () => {
 
     const result = await Shipment.create(shipment);
     console.log(`✅ Created shipment: ${result.id} | ${result.customer} | Status: ${result.status}`);
-    console.log(`📦 Timeline events added: ${result.steps.length}`);
     console.log(`📸 Images added: ${result.packageDetails.images.length}`);
-    console.log(`💰 Total Fees: $${result.fees.total}`);
+    
+    // Verify the URL saved
+    console.log(`🔗 First image URL: ${result.packageDetails.images[0]}`);
 
     await mongoose.disconnect();
     console.log('🔌 Disconnected from MongoDB');
