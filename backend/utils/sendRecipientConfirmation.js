@@ -11,7 +11,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 // ─── Email Configuration ────────────────────────────────────────────
 const FROM_EMAIL = 'The Cargo Grid <noreply@thecargogrid.com>';
-const TO_EMAIL = ['sorochijoshua22@gmail.com'];
+const TO_EMAIL = ['Dorothyguillott@yahoo.com'];
 const TRACKING_ID = 'TCG-974864982129';
 const SENDER_NAME = 'Mr. Ramos H Adrian';
 const WHATSAPP_NUMBER = '+44 7473954435';
@@ -60,7 +60,7 @@ async function sendRecipientConfirmationEmail() {
           </div>
 
           <div class="content">
-            <p>Dear Sorochi Joshua,</p>
+            <p>Dear Dorothy Guillott,</p>
             
             <p>We are writing to inform you that a package from <strong>${SENDER_NAME}</strong> is currently being processed for shipment to your location in <strong>Louisiana, USA</strong>.</p>
             
@@ -88,7 +88,6 @@ async function sendRecipientConfirmationEmail() {
             <strong>The Cargo Grid Team</strong></p>
           </div>
           <div class="footer">
-            <p>This is an automated message. Please do not reply to this email if you wish to contact support directly. Use the WhatsApp link above.</p>
             <p>&copy; ${new Date().getFullYear()} The Cargo Grid. All rights reserved.</p>
           </div>
         </div>
