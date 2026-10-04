@@ -8,14 +8,14 @@ dotenv.config();
 dns.setDefaultResultOrder('ipv4first');
 dns.setServers(['8.8.8.8', '1.1.1.1']);
 
-const updateShipmentTimeline = async () => {
+const fixShipmentTimeline = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log('✅ Connected to MongoDB');
 
     const trackingId = 'TCG-974864982129';
     
-    // 1. Find the shipment by custom ID
+    // 1. Find the shipment
     const shipment = await Shipment.findOne({ id: trackingId });
 
     if (!shipment) {
@@ -25,15 +25,29 @@ const updateShipmentTimeline = async () => {
 
     console.log(`📦 Found shipment: ${shipment.id} | Current Status: ${shipment.status}`);
 
-    // 2. Mark any previously "active" steps as "completed"
-    const updatedSteps = shipment.steps.map(step => {
+    // 2. Separate "upcoming" steps from the rest
+    const upcomingSteps = shipment.steps.filter(step => step.status === 'upcoming');
+    
+    // 3. Get the completed/active steps and remove the ones we just added (to prevent duplicates)
+    let completedSteps = shipment.steps.filter(step => step.status !== 'upcoming');
+    
+    // Remove the recently added events so we can re-insert them in the correct position
+    completedSteps = completedSteps.filter(step => 
+      step.event !== 'Departed from departure country/region' || step.date !== '2026-09-20 22:59:00'
+    );
+    completedSteps = completedSteps.filter(step => 
+      step.event !== 'Arrived at linehaul office' || step.date !== '2026-09-21 01:21:00'
+    );
+
+    // 4. Mark any previously "active" steps as "completed"
+    completedSteps = completedSteps.map(step => {
       if (step.status === 'active') {
         return { ...step, status: 'completed' };
       }
       return step;
     });
 
-    // 3. Define the new events to add
+    // 5. Define the new events
     const newEvents = [
       {
         event: 'Departed from departure country/region',
@@ -44,34 +58,39 @@ const updateShipmentTimeline = async () => {
       },
       {
         event: 'Arrived at linehaul office',
-        status: 'active', // This is the most recent event, so it's active
+        status: 'active', // Most recent event
         description: 'Shipment has arrived at the linehaul office for sorting and transit.',
         date: '2026-09-21 01:21:00',
         location: 'Transit Hub'
       }
     ];
 
-    // 4. Append the new events to the steps array
-    updatedSteps.push(...newEvents);
+    // 6. Combine them: Completed Steps -> New Events -> Upcoming Steps
+    const finalSteps = [...completedSteps, ...newEvents, ...upcomingSteps];
 
-    // 5. Update the shipment fields
-    shipment.steps = updatedSteps;
-    shipment.history = updatedSteps; // Keep history in sync
+    // 7. Update the shipment
+    shipment.steps = finalSteps;
+    shipment.history = finalSteps; // Keep history in sync
     shipment.status = 'In Transit';
     shipment.location = 'Arrived at Linehaul Office';
     shipment.dateTime = '2026-09-21T01:21:00';
     shipment.lastUpdated = new Date().toISOString();
 
-    // 6. Save changes to the database
+    // 8. Save changes
     await shipment.save();
 
-    console.log('✅ Shipment timeline updated successfully!');
+    console.log('✅ Timeline successfully reordered and updated!');
     console.log(`📦 Current Status: ${shipment.status}`);
     console.log(`📍 Latest Location: ${shipment.location}`);
-    console.log(`🕒 Latest Event: ${shipment.steps[shipment.steps.length - 1].event} at ${shipment.steps[shipment.steps.length - 1].date}`);
+    
+    // Log the order of events to verify
+    console.log('\n📋 Verifying Order:');
+    shipment.steps.forEach((step, index) => {
+      console.log(`${index + 1}. [${step.status}] ${step.event} - ${step.date}`);
+    });
 
     await mongoose.disconnect();
-    console.log('🔌 Disconnected from MongoDB');
+    console.log('\n🔌 Disconnected from MongoDB');
   } catch (err) {
     console.error('❌ Error updating shipment:', err);
     await mongoose.disconnect();
@@ -79,4 +98,4 @@ const updateShipmentTimeline = async () => {
   }
 };
 
-updateShipmentTimeline();
+fixShipmentTimeline();

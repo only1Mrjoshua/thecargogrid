@@ -221,15 +221,23 @@ function ContactPage() {
                   Contact Information
                 </h3>
                 <div className="space-y-4 text-sm">
-                  <div className="flex items-start gap-3">
-                    <Mail size={18} className="text-[#2B0071] flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-medium text-[#1A1A2E]">Email</p>
-                      <a href="mailto:support@thecargogrid.com" className="text-[#FF5500] hover:underline">
-                        support@thecargogrid.com
-                      </a>
-                    </div>
-                  </div>
+  <div>
+    <p className="font-medium text-[#1A1A2E]">Email</p>
+    <div className="flex flex-col gap-1 mt-1">
+      <div>
+        <span className="text-xs font-medium text-[#2B0071] uppercase tracking-wide">Support</span>
+        <a href="mailto:support@thecargogrid.com" className="block text-[#FF5500] hover:underline">
+          support@thecargogrid.com
+        </a>
+      </div>
+      <div>
+        <span className="text-xs font-medium text-[#2B0071] uppercase tracking-wide">Inquiries</span>
+        <a href="mailto:Thecargogrid@gmail.com" className="block text-[#FF5500] hover:underline">
+          Thecargogrid@gmail.com
+        </a>
+      </div>
+    </div>
+  </div>
                   <div className="flex items-start gap-3">
                     <Phone size={18} className="text-[#2B0071] flex-shrink-0 mt-0.5" />
                     <div>
