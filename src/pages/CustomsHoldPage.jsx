@@ -34,7 +34,7 @@ const extractCustomsData = (shipment) => {
       paid: shipment.fees.paid || false
     } : null,
     contactSupport: true,
-    nextSteps: 'Once payment has been made and verified, the shipment will be released within 24 hours.'
+    nextSteps: 'Once payment has been confirmed and verified, the shipment will be released within 24 hours.'
   };
 };
 
