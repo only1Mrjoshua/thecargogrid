@@ -21,7 +21,7 @@ const extractCustomsData = (shipment) => {
     holdDate: shipment.dateTime || shipment.date || new Date().toISOString().slice(0, 16),
     reason: shipment.description || 'Customs processing required',
     explanation: shipment.description || 'The shipment requires customs processing before it can continue.',
-    instructions: 'Please provide the required documents. You can upload them below or contact our support team for assistance.',
+    instructions: 'Please settle the outstanding customs clearance fee to release your shipment. Contact our support team if you need assistance with payment.',
     requiredDocuments: shipment.documents?.filter(d => d.required)?.map(d => ({ name: d.name, required: true, uploaded: false })) || [
       { name: 'Commercial Invoice', required: true, uploaded: false },
       { name: 'Packing List', required: true, uploaded: false },

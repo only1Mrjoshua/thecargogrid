@@ -1,4 +1,4 @@
-// utils/updateToCustomClearance.js
+// utils/updateToCustomsHold.js
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import dns from 'dns';
@@ -12,8 +12,8 @@ dns.setServers(['8.8.8.8', '1.1.1.1']);
 const TRACKING_ID = 'TCG-883011516487';
 const CUSTOM_CLEARANCE_FEE = 3189.00;
 
-// ✅ Must match the enum in models/Shipment.js
-const CUSTOMS_STATUS = 'Customs Fee Pending';
+// ✅ Matches the enum in models/Shipment.js
+const HOLD_STATUS = 'Customs Hold';
 
 // ─── Date helpers ───────────────────────────────────────────────────
 const pad = (n) => String(n).padStart(2, '0');
@@ -22,6 +22,7 @@ const fmtDateTime = (d) => `${fmtDate(d)} ${pad(d.getHours())}:${pad(d.getMinute
 
 const now = new Date();
 const nowStr = fmtDateTime(now);
+const feeLabel = `$${CUSTOM_CLEARANCE_FEE.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
 
 const updateShipment = async () => {
   try {
@@ -46,52 +47,52 @@ const updateShipment = async () => {
         return { ...plain, status: 'completed' };
       }
 
-      if (event.includes('custom') || event.includes('clearance')) {
+      if (event.includes('custom') || event.includes('clearance') || event.includes('hold')) {
         return {
           ...plain,
-          event: 'Import Custom Clearance',
+          event: 'Vehicle Customs Hold',
           status: 'active',
-          description: `Shipment is undergoing import customs clearance. Customs fee of $${CUSTOM_CLEARANCE_FEE.toLocaleString('en-US', { minimumFractionDigits: 2 })} is pending payment before release.`,
+          description: `Held at a European transit port near Belgium pending customs clearance. Outstanding customs fee of ${feeLabel} must be settled before release.`,
           date: nowStr,
-          location: 'Zurich Customs Hub, Switzerland'
+          location: 'European Transit Port, near Belgium'
         };
       }
 
       return { ...plain, status: 'upcoming' };
     });
 
-    // Insert the clearance step if missing
-    const hasClearanceStep = updatedSteps.some((s) =>
+    // Insert the hold step if missing
+    const hasHoldStep = updatedSteps.some((s) =>
+      (s.event || '').toLowerCase().includes('hold') ||
       (s.event || '').toLowerCase().includes('clearance') ||
       (s.event || '').toLowerCase().includes('custom')
     );
 
-    if (!hasClearanceStep) {
+    if (!hasHoldStep) {
       const inTransitIdx = updatedSteps.findIndex((s) =>
         (s.event || '').toLowerCase() === 'in transit'
       );
       const insertAt = inTransitIdx >= 0 ? inTransitIdx + 1 : updatedSteps.length;
       updatedSteps.splice(insertAt, 0, {
-        event: 'Import Custom Clearance',
+        event: 'Vehicle Customs Hold',
         status: 'active',
-        description: `Shipment is undergoing import customs clearance. Customs fee of $${CUSTOM_CLEARANCE_FEE.toLocaleString('en-US', { minimumFractionDigits: 2 })} is pending payment before release.`,
+        description: `Held at a European transit port near Belgium pending customs clearance. Outstanding customs fee of ${feeLabel} must be settled before release.`,
         date: nowStr,
-        location: 'Zurich Customs Hub, Switzerland'
+        location: 'European Transit Port, near Belgium'
       });
     }
 
     // ─── Top-level fields ───────────────────────────────────────────
-    shipment.status = CUSTOMS_STATUS;
-    shipment.location = 'Zurich Customs Hub, Switzerland – awaiting clearance fee';
+    shipment.status = HOLD_STATUS;
+    shipment.location = 'European Transit Port, near Belgium';
     shipment.description =
-      'High-value international shipment containing money and a car key. ' +
-      'Currently held at customs for import clearance into Switzerland. ' +
-      `A customs clearance fee of $${CUSTOM_CLEARANCE_FEE.toLocaleString('en-US', { minimumFractionDigits: 2 })} is pending before release.`;
+      `Vehicle held pending customs clearance at a European transit port near Belgium. ` +
+      `Customs fee of ${feeLabel} must be paid before release. En route to Switzerland.`;
     shipment.dateTime = now.toISOString();
     shipment.lastUpdated = now.toISOString();
-    shipment.nextAction = `Pay customs clearance fee of $${CUSTOM_CLEARANCE_FEE.toLocaleString('en-US', { minimumFractionDigits: 2 })} to proceed`;
+    shipment.nextAction = `Pay customs clearance fee of ${feeLabel} to release the vehicle`;
 
-    // ─── Fees: REPLACE with just the single unpaid customs fee ──────
+    // ─── Fees: ONLY the unpaid customs fee ──────────────────────────
     shipment.fees = {
       total: CUSTOM_CLEARANCE_FEE,
       currency: 'USD',
@@ -101,11 +102,11 @@ const updateShipment = async () => {
       ]
     };
 
+    // ─── Special instructions ───────────────────────────────────────
     shipment.specialInstructions =
-      'High-value parcel containing money and a car key. Enclosed and sealed container required. ' +
-      'Anti-theft seals. Do not stack. Shipment currently undergoing import customs clearance in Switzerland. ' +
-      `Custom clearance fee of $${CUSTOM_CLEARANCE_FEE.toLocaleString('en-US', { minimumFractionDigits: 2 })} must be settled before release. ` +
-      'Destination: Walderstrasse 7, 8340 Hinwil, Switzerland – hold for collection or local delivery arrangement.';
+      `Vehicle on customs hold at a European transit port near Belgium. ` +
+      `Customs fee of ${feeLabel} must be paid before clearance and release. ` +
+      `No additional documents required. Destination: Switzerland.`;
 
     shipment.steps = updatedSteps;
     shipment.history = updatedSteps;
@@ -120,7 +121,6 @@ const updateShipment = async () => {
     console.log(`📍 Location: ${shipment.location}`);
     console.log(`➡️  Next action: ${shipment.nextAction}`);
     console.log(`💵 Fees total (unpaid): $${CUSTOM_CLEARANCE_FEE.toFixed(2)}`);
-    console.log(`   • Import Custom Clearance Fee — $${CUSTOM_CLEARANCE_FEE.toFixed(2)}`);
 
     await mongoose.disconnect();
     console.log('🔌 Disconnected from MongoDB');
