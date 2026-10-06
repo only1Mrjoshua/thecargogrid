@@ -22,10 +22,11 @@ const extractCustomsData = (shipment) => {
     reason: shipment.description || 'Customs processing required',
     explanation: shipment.description || 'The shipment requires customs processing before it can continue.',
     instructions: 'Please settle the outstanding customs clearance fee to release your shipment. Contact our support team if you need assistance with payment.',
-    requiredDocuments: shipment.documents?.filter(d => d.required)?.map(d => ({ name: d.name, required: true, uploaded: false })) || [
-      { name: 'Commercial Invoice', required: true, uploaded: false },
-      { name: 'Packing List', required: true, uploaded: false },
-    ],
+    requiredDocuments: Array.isArray(shipment.documents)
+      ? shipment.documents
+          .filter(d => d && d.required)
+          .map(d => ({ name: d.name, required: true, uploaded: !!d.uploaded }))
+      : [],
     fee: shipment.fees ? {
       amount: shipment.fees.total || 0,
       currency: shipment.fees.currency || 'GBP',
@@ -157,7 +158,7 @@ function CustomsHoldPage() {
         </button>
 
         <div className="max-w-4xl mx-auto space-y-8">
-          {/* Header Card – unchanged */}
+          {/* Header Card */}
           <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-6 sm:p-8">
             <div className="flex flex-col sm:flex-row sm:items-start gap-4">
               <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#FF5500]/10 flex items-center justify-center text-[#FF5500]">
@@ -179,7 +180,7 @@ function CustomsHoldPage() {
             </div>
           </div>
 
-          {/* Details grid – unchanged */}
+          {/* Details grid */}
           <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-6 sm:p-8">
             <h2 className="text-lg font-bold text-[#1A1A2E] mb-4 flex items-center gap-2">
               <Info size={20} className="text-[#2B0071]" />
@@ -215,51 +216,53 @@ function CustomsHoldPage() {
             </div>
           </div>
 
-          {/* Documents – unchanged */}
-          <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-6 sm:p-8">
-            <h3 className="text-lg font-bold text-[#1A1A2E] mb-4 flex items-center gap-2">
-              <FileText size={20} className="text-[#2B0071]" />
-              Required Documents
-            </h3>
-            <div className="space-y-3">
-              {customsData.requiredDocuments.map((doc, idx) => (
-                <div key={idx} className="flex flex-wrap items-center justify-between gap-3 py-2 border-b border-[#E2E5F0] last:border-0">
-                  <div className="flex items-center gap-2">
-                    <FileText size={16} className="text-[#2B0071]/40" />
-                    <span className="font-medium text-sm">{doc.name}</span>
-                    {doc.required && (
-                      <span className="text-xs text-[#FF5500] bg-[#FF5500]/10 px-2 py-0.5 rounded-full">Required</span>
-                    )}
-                    {doc.uploaded && (
-                      <span className="text-xs text-[#10B981] bg-[#10B981]/10 px-2 py-0.5 rounded-full flex items-center gap-1">
-                        <CheckCircle size={12} /> Uploaded
-                      </span>
-                    )}
+          {/* Documents – only render when there are required documents */}
+          {customsData.requiredDocuments.length > 0 && (
+            <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-6 sm:p-8">
+              <h3 className="text-lg font-bold text-[#1A1A2E] mb-4 flex items-center gap-2">
+                <FileText size={20} className="text-[#2B0071]" />
+                Required Documents
+              </h3>
+              <div className="space-y-3">
+                {customsData.requiredDocuments.map((doc, idx) => (
+                  <div key={idx} className="flex flex-wrap items-center justify-between gap-3 py-2 border-b border-[#E2E5F0] last:border-0">
+                    <div className="flex items-center gap-2">
+                      <FileText size={16} className="text-[#2B0071]/40" />
+                      <span className="font-medium text-sm">{doc.name}</span>
+                      {doc.required && (
+                        <span className="text-xs text-[#FF5500] bg-[#FF5500]/10 px-2 py-0.5 rounded-full">Required</span>
+                      )}
+                      {doc.uploaded && (
+                        <span className="text-xs text-[#10B981] bg-[#10B981]/10 px-2 py-0.5 rounded-full flex items-center gap-1">
+                          <CheckCircle size={12} /> Uploaded
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleViewDocument(doc.name)}
+                        className="text-xs font-medium text-[#2B0071] hover:text-[#FF5500] transition-colors"
+                      >
+                        View
+                      </button>
+                      <button
+                        onClick={() => handleDownloadDocument(doc.name)}
+                        className="text-xs font-medium text-[#2B0071] hover:text-[#FF5500] transition-colors flex items-center gap-1"
+                      >
+                        <Download size={12} /> Download
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleViewDocument(doc.name)}
-                      className="text-xs font-medium text-[#2B0071] hover:text-[#FF5500] transition-colors"
-                    >
-                      View
-                    </button>
-                    <button
-                      onClick={() => handleDownloadDocument(doc.name)}
-                      className="text-xs font-medium text-[#2B0071] hover:text-[#FF5500] transition-colors flex items-center gap-1"
-                    >
-                      <Download size={12} /> Download
-                    </button>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
+              <div className="mt-4 text-sm text-gray-500 flex items-center gap-2">
+                <Info size={14} className="text-[#2B0071]/40" />
+                Upload missing documents through your account or contact support.
+              </div>
             </div>
-            <div className="mt-4 text-sm text-gray-500 flex items-center gap-2">
-              <Info size={14} className="text-[#2B0071]/40" />
-              Upload missing documents through your account or contact support.
-            </div>
-          </div>
+          )}
 
-          {/* Fee and Actions – UPDATED with WhatsApp */}
+          {/* Fee and Actions */}
           <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
             {/* Fee card – WhatsApp payment contact */}
             <div className="bg-white rounded-2xl border border-[#E2E5F0] shadow-card p-6">
@@ -303,7 +306,7 @@ function CustomsHoldPage() {
             </div>
           </div>
 
-          {/* Next steps – unchanged */}
+          {/* Next steps */}
           <div className="bg-[#F8F9FD] rounded-2xl border border-[#E2E5F0] p-6 text-sm text-gray-600">
             <p className="font-medium text-[#1A1A2E]">Next steps:</p>
             <p>{customsData.nextSteps}</p>
