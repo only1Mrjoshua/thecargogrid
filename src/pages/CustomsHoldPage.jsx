@@ -20,7 +20,7 @@ const extractCustomsData = (shipment) => {
     currentLocation: shipment.currentLocation || shipment.location || 'Customs Clearance Centre',
     holdDate: shipment.dateTime || shipment.date || new Date().toISOString().slice(0, 16),
     reason: shipment.description || 'Customs processing required',
-    explanation: shipment.description || 'The shipment requires additional customs processing before it can continue.',
+    explanation: shipment.description || 'The shipment requires customs processing before it can continue.',
     instructions: 'Please provide the required documents. You can upload them below or contact our support team for assistance.',
     requiredDocuments: shipment.documents?.filter(d => d.required)?.map(d => ({ name: d.name, required: true, uploaded: false })) || [
       { name: 'Commercial Invoice', required: true, uploaded: false },
@@ -166,7 +166,7 @@ function CustomsHoldPage() {
               <div className="flex-1 min-w-0">
                 <h1 className="text-2xl font-bold text-[#1A1A2E]">Shipment Held by Customs</h1>
                 <p className="text-gray-600 mt-1">
-                  Your shipment requires additional customs processing before it can continue to its destination.
+                  Your shipment requires customs processing before it can continue to its destination.
                 </p>
                 <div className="mt-4 flex flex-wrap items-center gap-3">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#FF5500]/10 text-[#FF5500] rounded-full text-xs font-semibold">
