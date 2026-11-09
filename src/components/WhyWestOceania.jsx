@@ -1,4 +1,4 @@
-// src/components/WhyCargoGrid.jsx
+// src/components/WhyWestOceania.jsx
 import { useEffect, useRef } from 'react';
 import { CheckCircle2, Eye, Bell, FileText, CreditCard } from 'lucide-react';
 
@@ -25,7 +25,7 @@ const features = [
   },
 ];
 
-function WhyCargoGrid() {
+function WhyWestOceania() {
   const sectionRef = useRef(null);
 
   useEffect(() => {
@@ -55,7 +55,7 @@ function WhyCargoGrid() {
             <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-[#2B0071]/8">
               <img
                 src="/warehouse.jpg"
-                alt="The Cargo Grid warehouse and logistics facility"
+                alt="West Oceania warehouse and logistics facility"
                 className="w-full h-[280px] sm:h-[340px] md:h-[400px] lg:h-[440px] xl:h-[480px] object-cover"
                 loading="lazy"
               />
@@ -79,7 +79,7 @@ function WhyCargoGrid() {
           {/* Right: Content */}
           <div className="order-1 lg:order-2 space-y-6">
             <div className="reveal">
-              <span className="label-sm text-[#FF5500] font-semibold block mb-2">Why The Cargo Grid</span>
+              <span className="label-sm text-[#FF5500] font-semibold block mb-2">Why West Oceania</span>
               <h2 id="why-heading" className="heading-section text-[#1A1A2E]">
                 More visibility. <br />
                 <span className="text-[#2B0071]">Less uncertainty.</span>
@@ -87,7 +87,7 @@ function WhyCargoGrid() {
             </div>
 
             <p className="body-text reveal delay-100">
-              You shouldn't have to wonder where your shipment is. The Cargo Grid gives you
+              You shouldn't have to wonder where your shipment is. West Oceania gives you
               complete visibility and control over your packages from pickup to delivery.
             </p>
 
@@ -119,4 +119,4 @@ function WhyCargoGrid() {
   );
 }
 
-export default WhyCargoGrid;
+export default WhyWestOceania;

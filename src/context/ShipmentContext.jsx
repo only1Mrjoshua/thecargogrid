@@ -4,9 +4,18 @@ const ShipmentContext = createContext();
 
 const generateId = () => 'doc-' + Math.random().toString(36).substring(2, 10);
 
+// One-time migration: rewrite legacy TCG- prefixes to WO-
+const migrateShipment = (s) => {
+  const updated = { ...s, documents: s.documents || [] };
+  if (typeof updated.id === 'string' && updated.id.startsWith('TCG-')) {
+    updated.id = 'WO-' + updated.id.slice(4);
+  }
+  return updated;
+};
+
 const initialMockShipments = [
   {
-    id: 'TCG-123456789012',
+    id: 'WO-123456789012',
     customer: 'John Smith',
     email: 'john@techsupply.co.uk',
     phone: '+44 20 7946 0958',
@@ -25,7 +34,7 @@ const initialMockShipments = [
     ],
   },
   {
-    id: 'TCG-234567890123',
+    id: 'WO-234567890123',
     customer: 'Alice Brown',
     email: 'alice@fastmove.co.uk',
     phone: '+44 161 234 5678',
@@ -43,7 +52,7 @@ const initialMockShipments = [
     ],
   },
   {
-    id: 'TCG-345678901234',
+    id: 'WO-345678901234',
     customer: 'David Wilson',
     email: 'david@glasgowexports.co.uk',
     phone: '+44 141 555 0199',
@@ -68,9 +77,18 @@ export function ShipmentProvider({ children }) {
   const [shipments, setShipments] = useState(() => {
     const stored = localStorage.getItem('adminShipments');
     if (stored) {
-      const parsed = JSON.parse(stored);
-      // Ensure each shipment has a documents array
-      return parsed.map(s => ({ ...s, documents: s.documents || [] }));
+      try {
+        const parsed = JSON.parse(stored);
+        const migrated = parsed.map(migrateShipment);
+        // Persist migrated data immediately so the rewrite only happens once
+        const needsMigration = JSON.stringify(parsed) !== JSON.stringify(migrated);
+        if (needsMigration) {
+          localStorage.setItem('adminShipments', JSON.stringify(migrated));
+        }
+        return migrated;
+      } catch {
+        return initialMockShipments;
+      }
     }
     return initialMockShipments;
   });

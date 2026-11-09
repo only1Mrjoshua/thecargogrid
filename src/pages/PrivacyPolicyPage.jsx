@@ -35,7 +35,7 @@ function PrivacyPolicyPage() {
                 Last updated: August 2026
               </p>
               <p className="text-gray-600 max-w-2xl mx-auto mt-4">
-                The Cargo Grid is committed to protecting your privacy and handling your personal
+                West Oceania is committed to protecting your privacy and handling your personal
                 data with transparency and care.
               </p>
             </div>
@@ -153,7 +153,7 @@ function PrivacyPolicyPage() {
                 <p className="text-gray-600 leading-relaxed">
                   You have the right to access, correct, or delete your personal data at any time.
                   You may also request a copy of the data we hold about you. To exercise these rights,
-                  please contact us at <a href="mailto:privacy@thecargogrid.com" className="text-[#FF5500] hover:underline">privacy@thecargogrid.com</a>.
+                  please contact us at <a href="mailto:privacy@westoceania.com" className="text-[#FF5500] hover:underline">privacy@westoceania.com</a>.
                 </p>
               </section>
 
@@ -161,7 +161,7 @@ function PrivacyPolicyPage() {
               <section className="border-t border-[#E2E5F0] pt-6">
                 <p className="text-sm text-gray-500">
                   If you have any questions about our Privacy Policy, please contact our Data
-                  Protection Officer at <a href="mailto:dpo@thecargogrid.com" className="text-[#FF5500] hover:underline">dpo@thecargogrid.com</a>.
+                  Protection Officer at <a href="mailto:dpo@westoceania.com" className="text-[#FF5500] hover:underline">dpo@westoceania.com</a>.
                 </p>
               </section>
             </div>

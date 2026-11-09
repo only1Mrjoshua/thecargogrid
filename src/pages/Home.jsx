@@ -5,7 +5,7 @@ import Stats from '../components/Stats';
 import ShipSection from '../components/ShipSection';     // shipping-focused
 import HowTrackingWorks from '../components/HowTrackingWorks'; // now shipping process
 import Services from '../components/Services';          // shipping services
-import WhyCargoGrid from '../components/WhyCargoGrid';  // shipping benefits
+import WhyWestOceania from '../components/WhyWestOceania';  // shipping benefits
 import ShipmentJourney from '../components/ShipmentJourney'; // shipping journey
 import TrackingPreview from '../components/TrackingPreview'; // tracking demo (now lower)
 import SecuritySection from '../components/SecuritySection';
@@ -46,7 +46,7 @@ function Home() {
       <ShipSection />          {/* moved up – shipping first */}
       <HowTrackingWorks />     {/* now shows shipping process with tracking as a step */}
       <Services />             {/* shipping services */}
-      <WhyCargoGrid />         {/* shipping benefits */}
+      <WhyWestOceania />       {/* shipping benefits */}
       <ShipmentJourney />      {/* shipping journey timeline */}
       <TrackingPreview />      {/* tracking demo – now lower down */}
       <SecuritySection />

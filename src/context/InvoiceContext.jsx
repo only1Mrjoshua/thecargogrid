@@ -4,12 +4,20 @@ const InvoiceContext = createContext();
 
 const generateId = () => 'INV-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random() * 10000)).padStart(4, '0');
 
+// One-time migration: rewrite legacy TCG- prefixes to WO-
+const migrateInvoice = (inv) => {
+  if (typeof inv.trackingNumber === 'string' && inv.trackingNumber.startsWith('TCG-')) {
+    return { ...inv, trackingNumber: 'WO-' + inv.trackingNumber.slice(4) };
+  }
+  return inv;
+};
+
 const initialMockInvoices = [
   {
     id: 'INV-2026-0001',
     invoiceNumber: 'INV-2026-0001',
     customer: 'John Smith',
-    trackingNumber: 'TCG-123456789012',
+    trackingNumber: 'WO-123456789012',
     description: 'Customs Clearance Fee',
     amount: 35.00,
     currency: 'GBP',
@@ -22,7 +30,7 @@ const initialMockInvoices = [
     id: 'INV-2026-0002',
     invoiceNumber: 'INV-2026-0002',
     customer: 'Alice Brown',
-    trackingNumber: 'TCG-234567890123',
+    trackingNumber: 'WO-234567890123',
     description: 'Express Delivery',
     amount: 30.00,
     currency: 'GBP',
@@ -35,7 +43,7 @@ const initialMockInvoices = [
     id: 'INV-2026-0003',
     invoiceNumber: 'INV-2026-0003',
     customer: 'David Wilson',
-    trackingNumber: 'TCG-345678901234',
+    trackingNumber: 'WO-345678901234',
     description: 'Customs Processing Fee',
     amount: 35.00,
     currency: 'GBP',
@@ -48,7 +56,7 @@ const initialMockInvoices = [
     id: 'INV-2026-0004',
     invoiceNumber: 'INV-2026-0004',
     customer: 'Emily Johnson',
-    trackingNumber: 'TCG-567890123456',
+    trackingNumber: 'WO-567890123456',
     description: 'Freight Shipping',
     amount: 120.00,
     currency: 'GBP',
@@ -62,7 +70,20 @@ const initialMockInvoices = [
 export function InvoiceProvider({ children }) {
   const [invoices, setInvoices] = useState(() => {
     const stored = localStorage.getItem('adminInvoices');
-    return stored ? JSON.parse(stored) : initialMockInvoices;
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        const migrated = parsed.map(migrateInvoice);
+        const needsMigration = JSON.stringify(parsed) !== JSON.stringify(migrated);
+        if (needsMigration) {
+          localStorage.setItem('adminInvoices', JSON.stringify(migrated));
+        }
+        return migrated;
+      } catch {
+        return initialMockInvoices;
+      }
+    }
+    return initialMockInvoices;
   });
 
   useEffect(() => {

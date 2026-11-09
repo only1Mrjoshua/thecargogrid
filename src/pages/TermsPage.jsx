@@ -35,7 +35,7 @@ function TermsPage() {
                 Last updated: August 2026
               </p>
               <p className="text-gray-600 max-w-2xl mx-auto mt-4">
-                By using The Cargo Grid services, you agree to the following terms and conditions.
+                By using West Oceania services, you agree to the following terms and conditions.
                 Please read them carefully.
               </p>
             </div>
@@ -49,7 +49,7 @@ function TermsPage() {
                   Shipping Terms
                 </h2>
                 <p className="text-gray-600 leading-relaxed">
-                  The Cargo Grid provides logistics and shipping services across domestic and
+                  West Oceania provides logistics and shipping services across domestic and
                   international routes. Shipping times are estimated and may vary due to factors
                   beyond our control, such as weather, customs delays, or carrier disruptions.
                   We will make reasonable efforts to meet the estimated delivery dates but do not
@@ -113,7 +113,7 @@ function TermsPage() {
                 </p>
                 <p className="text-gray-600 leading-relaxed mt-2">
                   Customs duties, taxes, and fees are the responsibility of the recipient unless
-                  otherwise agreed. The Cargo Grid will assist with customs clearance but does not
+                  otherwise agreed. West Oceania will assist with customs clearance but does not
                   assume liability for delays or additional charges caused by incorrect documentation
                   or regulatory changes.
                 </p>
@@ -143,7 +143,7 @@ function TermsPage() {
                   Liability
                 </h2>
                 <p className="text-gray-600 leading-relaxed">
-                  The Cargo Grid’s liability is limited to the value of the shipment or the amount
+                  West Oceania’s liability is limited to the value of the shipment or the amount
                   paid for the service, whichever is lower. We are not liable for indirect, special,
                   or consequential damages, including lost profits or business interruption.
                 </p>
@@ -177,7 +177,7 @@ function TermsPage() {
               <section className="border-t border-[#E2E5F0] pt-6">
                 <h2 className="text-xl font-bold text-[#1A1A2E] mb-3">Amendments</h2>
                 <p className="text-gray-600 leading-relaxed">
-                  The Cargo Grid reserves the right to update these terms at any time. Changes will
+                  West Oceania reserves the right to update these terms at any time. Changes will
                   be posted on this page, and the “last updated” date will be revised. Your continued
                   use of our services constitutes acceptance of the updated terms.
                 </p>
@@ -187,8 +187,8 @@ function TermsPage() {
               <section className="border-t border-[#E2E5F0] pt-6">
                 <p className="text-sm text-gray-500">
                   If you have any questions about these Terms & Conditions, please contact us at
-                  <a href="mailto:legal@thecargogrid.com" className="text-[#FF5500] hover:underline ml-1">
-                    legal@thecargogrid.com
+                  <a href="mailto:legal@westoceania.com" className="text-[#FF5500] hover:underline ml-1">
+                    legal@westoceania.com
                   </a>.
                 </p>
               </section>

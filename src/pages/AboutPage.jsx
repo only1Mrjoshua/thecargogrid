@@ -42,7 +42,7 @@ function AboutPage() {
             <div className="max-w-3xl">
               <span className="inline-flex items-center gap-2 text-[#FF5500] text-sm font-semibold uppercase tracking-wider mb-4 reveal">
                 <Globe2 size={18} />
-                About The Cargo Grid
+                About West Oceania
               </span>
               <h1 className="heading-hero text-white reveal delay-100">
                 Connecting the world,<br />
@@ -161,7 +161,7 @@ function AboutPage() {
                 <div className="bg-[#2B0071]/5 rounded-2xl p-8 border border-[#E2E5F0]">
                   <img
                     src="/warehouse.jpg"
-                    alt="The Cargo Grid secure logistics facility"
+                    alt="West Oceania secure logistics facility"
                     className="w-full h-[280px] object-cover rounded-xl shadow-lg"
                     loading="lazy"
                   />
@@ -205,7 +205,7 @@ function AboutPage() {
           <div className="container-custom text-center">
             <h2 className="heading-section text-[#1A1A2E] reveal">Ready to track your shipment?</h2>
             <p className="body-text max-w-xl mx-auto mt-3 reveal delay-100">
-              Experience the transparency and reliability of The Cargo Grid. Start tracking now.
+              Experience the transparency and reliability of West Oceania. Start tracking now.
             </p>
             <button
               onClick={() => navigate('/track')}

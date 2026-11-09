@@ -150,7 +150,7 @@ function ContactPage() {
                       id="trackingNumber"
                       name="trackingNumber"
                       type="text"
-                      placeholder="TCG-123456789012"
+                      placeholder="WO-123456789012"
                       value={formData.trackingNumber}
                       onChange={handleChange}
                       className="w-full px-4 py-3 text-base bg-white border border-[#E2E5F0] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF5500]/20 focus:border-[#FF5500] transition-all"
@@ -221,23 +221,23 @@ function ContactPage() {
                   Contact Information
                 </h3>
                 <div className="space-y-4 text-sm">
-  <div>
-    <p className="font-medium text-[#1A1A2E]">Email</p>
-    <div className="flex flex-col gap-1 mt-1">
-      <div>
-        <span className="text-xs font-medium text-[#2B0071] uppercase tracking-wide">Support</span>
-        <a href="mailto:support@thecargogrid.com" className="block text-[#FF5500] hover:underline">
-          support@thecargogrid.com
-        </a>
-      </div>
-      <div>
-        <span className="text-xs font-medium text-[#2B0071] uppercase tracking-wide">Inquiries</span>
-        <a href="mailto:Thecargogrid@gmail.com" className="block text-[#FF5500] hover:underline">
-          Thecargogrid@gmail.com
-        </a>
-      </div>
-    </div>
-  </div>
+                  <div>
+                    <p className="font-medium text-[#1A1A2E]">Email</p>
+                    <div className="flex flex-col gap-1 mt-1">
+                      <div>
+                        <span className="text-xs font-medium text-[#2B0071] uppercase tracking-wide">Support</span>
+                        <a href="mailto:support@westoceania.com" className="block text-[#FF5500] hover:underline">
+                          support@westoceania.com
+                        </a>
+                      </div>
+                      <div>
+                        <span className="text-xs font-medium text-[#2B0071] uppercase tracking-wide">Inquiries</span>
+                        <a href="mailto:inquiries@westoceania.com" className="block text-[#FF5500] hover:underline">
+                          inquiries@westoceania.com
+                        </a>
+                      </div>
+                    </div>
+                  </div>
                   <div className="flex items-start gap-3">
                     <Phone size={18} className="text-[#2B0071] flex-shrink-0 mt-0.5" />
                     <div>

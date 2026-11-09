@@ -56,7 +56,7 @@ const Receipt = () => {
       }, 500);
     } else {
       setShipment({
-        id: 'TCG-123456789012',
+        id: 'WO-123456789012',
         customer: 'Lee Jun ho',
         email: 'realjunho1990@gmail.com',
         phone: '+1 818 278 0024',
@@ -163,7 +163,7 @@ const Receipt = () => {
             {/* Header with Logo */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-200 pb-4">
               <div className="flex items-center gap-3">
-                <img src="/logo.png" alt="The Cargo Grid" className="h-12 w-auto" />
+                <img src="/logo.png" alt="West Oceania" className="h-12 w-auto" />
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">Payment Receipt</h1>
                   <p className="text-gray-600 text-base">
@@ -284,9 +284,9 @@ const Receipt = () => {
           <div className="mt-8 pt-4 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-2 text-sm text-gray-500 no-print">
             <div className="flex items-center gap-2">
               <span>Thank you for choosing</span>
-              <img src="/logo.png" alt="The Cargo Grid" className="h-10 w-auto" />
+              <img src="/logo.png" alt="West Oceania" className="h-10 w-auto" />
             </div>
-            <span>© 1995-{new Date().getFullYear()} The Cargo Grid. All rights reserved.</span>
+            <span>© 1995-{new Date().getFullYear()} West Oceania. All rights reserved.</span>
           </div>
         </div>
       </div>

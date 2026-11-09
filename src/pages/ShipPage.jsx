@@ -337,7 +337,7 @@ function ShipPage() {
   // ----- WhatsApp contact (Payment step) -----
   const openWhatsApp = () => {
     const message = encodeURIComponent(
-      `Hello The Cargo Grid,\n\nI have just booked a shipment with tracking number ${trackingNumber}.\nI would like to arrange payment. Please guide me on how to proceed.\n\nThank you.`
+      `Hello West Oceania,\n\nI have just booked a shipment with tracking number ${trackingNumber}.\nI would like to arrange payment. Please guide me on how to proceed.\n\nThank you.`
     );
     window.open(`https://wa.me/15123255688?text=${message}`, '_blank');
   };

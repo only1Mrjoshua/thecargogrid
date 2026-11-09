@@ -62,7 +62,7 @@ function SecuritySection() {
 
           <p className="text-lg text-white/70 max-w-2xl mx-auto mt-4 reveal delay-200">
             From tracking updates to payment confirmations and shipment documentation,
-            The Cargo Grid is designed around secure and transparent logistics management.
+            West Oceania is designed around secure and transparent logistics management.
           </p>
 
           {/* Features */}

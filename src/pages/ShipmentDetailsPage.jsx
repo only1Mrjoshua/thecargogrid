@@ -107,7 +107,7 @@ function ShipmentDetailsPage() {
   // WhatsApp payment link
   const getWhatsAppLink = () => {
     const message = encodeURIComponent(
-      `Hello The Cargo Grid,\n\nI would like to pay the outstanding fees for shipment ${shipment.id || shipment.trackingNumber}.\n\nPlease guide me on how to complete the payment.\n\nThank you.`
+      `Hello West Oceania,\n\nI would like to pay the outstanding fees for shipment ${shipment.id || shipment.trackingNumber}.\n\nPlease guide me on how to complete the payment.\n\nThank you.`
     );
     return `https://wa.me/15123255688?text=${message}`;
   };

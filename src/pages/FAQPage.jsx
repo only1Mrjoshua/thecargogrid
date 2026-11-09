@@ -14,7 +14,7 @@ const faqData = [
     id: 2,
     category: 'Tracking',
     question: 'Where can I find my tracking number?',
-    answer: 'Your tracking number is provided in your shipment confirmation email and on your order receipt. It typically starts with "TCG-" followed by a series of numbers. If you cannot find it, please contact our support team.'
+    answer: 'Your tracking number is provided in your shipment confirmation email and on your order receipt. It typically starts with "WO-" followed by a series of numbers. If you cannot find it, please contact our support team.'
   },
   {
     id: 3,
@@ -56,7 +56,7 @@ const faqData = [
     id: 9,
     category: 'Support',
     question: 'How do I contact support?',
-    answer: 'You can reach our support team via the Contact page, by emailing support@thecargogrid.com, or by calling +44 800 555 0199. Our team is available Monday–Friday from 8:00am to 6:00pm and Saturday from 9:00am to 2:00pm.'
+    answer: 'You can reach our support team via the Contact page, by emailing support@westoceania.com, or by calling +44 800 555 0199. Our team is available Monday–Friday from 8:00am to 6:00pm and Saturday from 9:00am to 2:00pm.'
   },
 ];
 

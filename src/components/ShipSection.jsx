@@ -73,7 +73,7 @@ function ShipSection() {
           <div className="order-1 lg:order-2 reveal delay-200">
             <img
               src="/hero2.jpeg"
-              alt="The Cargo Grid shipping and logistics facility"
+              alt="West Oceania shipping and logistics facility"
               className="w-full h-[280px] object-cover rounded-2xl shadow-md"
               loading="lazy"
             />

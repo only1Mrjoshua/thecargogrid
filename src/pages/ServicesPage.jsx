@@ -169,7 +169,7 @@ function ServicesPage() {
           <div className="container-custom">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="reveal">
-                <span className="label-sm text-[#FF5500] font-semibold block">Why Choose The Cargo Grid</span>
+                <span className="label-sm text-[#FF5500] font-semibold block">Why Choose West Oceania</span>
                 <h2 className="heading-section text-[#1A1A2E]">
                   We deliver more than <span className="text-[#2B0071]">packages.</span>
                 </h2>
@@ -197,7 +197,7 @@ function ServicesPage() {
                 <div className="bg-[#2B0071]/5 rounded-2xl p-6 border border-[#E2E5F0]">
                   <img
                     src="/warehouse.jpg"
-                    alt="The Cargo Grid logistics facility"
+                    alt="West Oceania logistics facility"
                     className="w-full h-[300px] object-cover rounded-xl shadow-lg"
                     loading="lazy"
                   />

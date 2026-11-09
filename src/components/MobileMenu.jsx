@@ -41,7 +41,7 @@ function MobileMenu({ isOpen, onClose }) {
       <div className="absolute right-0 top-0 h-full w-full max-w-sm bg-[#FFFFFF] shadow-2xl animate-slide-down overflow-y-auto">
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between px-5 py-4 border-b border-[#E2E5F0]">
-            <img src="/logo.png" alt="The Cargo Grid" className="h-8 w-auto object-contain" />
+            <img src="/logo.png" alt="West Oceania" className="h-8 w-auto object-contain" />
             <button
               onClick={onClose}
               className="p-2 -mr-2 text-[#1A1A2E] hover:text-[#2B0071] transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5500]"

@@ -52,7 +52,7 @@ function Footer() {
               <Link to="/" className="inline-block">
                 <img 
                   src="/logo.png" 
-                  alt="The Cargo Grid" 
+                  alt="West Oceania" 
                   className="h-14 w-auto object-contain brightness-0 invert" 
                 />
               </Link>
@@ -63,24 +63,24 @@ function Footer() {
               {/* Contact Details */}
               <div className="space-y-3 text-sm text-white/60 pt-1">
                 <a 
-                  href="mailto:support@thecargogrid.com" 
+                  href="mailto:support@westoceania.com" 
                   className="flex items-start gap-3 hover:text-white transition-colors group"
                 >
                   <Mail size={16} className="text-[#FF5500] flex-shrink-0 mt-0.5" />
                   <span>
                     <span className="text-white/40 text-xs uppercase tracking-wider mr-1.5">Support:</span>
-                    support@thecargogrid.com
+                    support@westoceania.com
                   </span>
                 </a>
                 
                 <a 
-                  href="mailto:Thecargogrid@gmail.com" 
+                  href="mailto:inquiries@westoceania.com" 
                   className="flex items-start gap-3 hover:text-white transition-colors group"
                 >
                   <Mail size={16} className="text-[#FF5500] flex-shrink-0 mt-0.5" />
                   <span>
                     <span className="text-white/40 text-xs uppercase tracking-wider mr-1.5">Inquiries:</span>
-                    Thecargogrid@gmail.com
+                    inquiries@westoceania.com
                   </span>
                 </a>
                 
@@ -174,7 +174,7 @@ function Footer() {
 
         {/* Bottom bar */}
         <div className="py-6 flex flex-col sm:flex-row items-center justify-center text-sm text-white/40">
-          <p>&copy; 1995-{currentYear} The Cargo Grid. All rights reserved.</p>
+          <p>&copy; 1995-{currentYear} West Oceania. All rights reserved.</p>
         </div>
       </div>
     </footer>
