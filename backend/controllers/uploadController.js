@@ -5,7 +5,7 @@ const uploadWithRetry = async (image, retries = 3) => {
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
       const result = await cloudinary.uploader.upload(image, {
-        folder: 'the-cargo-grid/packages',
+        folder: 'west-oceania/packages',
         transformation: [{ width: 800, height: 800, crop: 'limit' }],
         timeout: 60000, // 60 seconds
       });
