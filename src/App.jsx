@@ -3,6 +3,7 @@ import { ShipmentProvider } from './context/ShipmentContext';
 import { InvoiceProvider } from './context/InvoiceContext';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import ScrollToTop from './components/ScrollToTop';   // 👈 NEW
 import Home from './pages/Home';
 import TrackPage from './pages/TrackPage';
 import ShipmentDetailsPage from './pages/ShipmentDetailsPage';
@@ -36,6 +37,9 @@ function App() {
     <ShipmentProvider>
       <InvoiceProvider>
         <AuthProvider>
+          {/* 👇 Automatically scrolls to top on every route change */}
+          <ScrollToTop />
+
           <Routes>
             {/* Public routes */}
             <Route path="/" element={<Home />} />
