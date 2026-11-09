@@ -5,34 +5,34 @@ const footerLinks = {
   company: {
     title: 'Company',
     links: [
-      { label: 'About Us', href: '/about' },
-      { label: 'Services', href: '/services' },
-      { label: 'Ship a Package', href: '/ship' },
-      { label: 'Contact', href: '/contact' },
-      { label: 'FAQ', href: '/faq' },
+      { label: 'About Us', href: '#/about' },
+      { label: 'Services', href: '#/services' },
+      { label: 'Ship a Package', href: '#/ship' },
+      { label: 'Contact', href: '#/contact' },
+      { label: 'FAQ', href: '#/faq' },
     ],
   },
   tracking: {
     title: 'Tracking',
     links: [
-      { label: 'Track Shipment', href: '/track' },
-      { label: 'Shipment Status', href: '/track' },
-      { label: 'Delivery Information', href: '/track' },
+      { label: 'Track Shipment', href: '#/track' },
+      { label: 'Shipment Status', href: '#/track' },
+      { label: 'Delivery Information', href: '#/track' },
     ],
   },
   support: {
     title: 'Support',
     links: [
-      { label: 'Help Center', href: '/contact' },
-      { label: 'Contact Support', href: '/contact' },
-      { label: 'Shipping Questions', href: '/faq' },
+      { label: 'Help Center', href: '#/contact' },
+      { label: 'Contact Support', href: '#/contact' },
+      { label: 'Shipping Questions', href: '#/faq' },
     ],
   },
   legal: {
     title: 'Legal',
     links: [
-      { label: 'Privacy Policy', href: '/privacy' },
-      { label: 'Terms & Conditions', href: '/terms' },
+      { label: 'Privacy Policy', href: '#/privacy' },
+      { label: 'Terms & Conditions', href: '#/terms' },
     ],
   },
 };
@@ -49,13 +49,13 @@ function Footer() {
             
             {/* Brand Column */}
             <div className="space-y-5">
-              <Link to="/" className="inline-block">
+              <a href="#/" className="inline-block" aria-label="West Oceania home">
                 <img 
                   src="/logo.png" 
                   alt="West Oceania" 
                   className="h-14 w-auto object-contain brightness-0 invert" 
                 />
-              </Link>
+              </a>
               <p className="text-sm text-white/60 max-w-xs leading-relaxed">
                 Reliable logistics. Clear tracking. Every step of the way.
               </p>
@@ -102,12 +102,12 @@ function Footer() {
               <ul className="space-y-3">
                 {footerLinks.company.links.map((link) => (
                   <li key={link.label}>
-                    <Link
-                      to={link.href}
+                    <a
+                      href={link.href}
                       className="text-sm text-white/60 hover:text-white transition-colors duration-200 hover:underline underline-offset-2"
                     >
                       {link.label}
-                    </Link>
+                    </a>
                   </li>
                 ))}
               </ul>
@@ -121,12 +121,12 @@ function Footer() {
               <ul className="space-y-3">
                 {footerLinks.tracking.links.map((link) => (
                   <li key={link.label}>
-                    <Link
-                      to={link.href}
+                    <a
+                      href={link.href}
                       className="text-sm text-white/60 hover:text-white transition-colors duration-200 hover:underline underline-offset-2"
                     >
                       {link.label}
-                    </Link>
+                    </a>
                   </li>
                 ))}
               </ul>
@@ -140,12 +140,12 @@ function Footer() {
               <ul className="space-y-3">
                 {footerLinks.support.links.map((link) => (
                   <li key={link.label}>
-                    <Link
-                      to={link.href}
+                    <a
+                      href={link.href}
                       className="text-sm text-white/60 hover:text-white transition-colors duration-200 hover:underline underline-offset-2"
                     >
                       {link.label}
-                    </Link>
+                    </a>
                   </li>
                 ))}
               </ul>
@@ -159,12 +159,12 @@ function Footer() {
               <ul className="space-y-3">
                 {footerLinks.legal.links.map((link) => (
                   <li key={link.label}>
-                    <Link
-                      to={link.href}
+                    <a
+                      href={link.href}
                       className="text-sm text-white/60 hover:text-white transition-colors duration-200 hover:underline underline-offset-2"
                     >
                       {link.label}
-                    </Link>
+                    </a>
                   </li>
                 ))}
               </ul>
