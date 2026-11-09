@@ -46,9 +46,9 @@ export const createInvoice = async (req, res, next) => {
     }
 
     // Validate tracking number format (optional)
-    if (!trackingNumber.startsWith('TCG-')) {
+    if (!trackingNumber.startsWith('WO-')) {
       console.log('❌ Invalid tracking number format:', trackingNumber);
-      return res.status(400).json({ message: 'Tracking number must start with TCG-' });
+      return res.status(400).json({ message: 'Tracking number must start with WO-' });
     }
 
     const invoice = await Invoice.create({

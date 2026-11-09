@@ -92,7 +92,7 @@ const shipmentSchema = new mongoose.Schema({
 shipmentSchema.pre('save', async function() {
   if (!this.id) {
     const random = Math.floor(Math.random() * 10**12).toString().padStart(12, '0');
-    this.id = `TCG-${random}`;
+    this.id = `WO-${random}`;
   }
   if (!this.date) {
     this.date = new Date().toISOString().slice(0, 10);

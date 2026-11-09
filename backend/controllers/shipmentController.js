@@ -38,7 +38,7 @@ export const createShipment = async (req, res, next) => {
     let trackingId = id;
     if (!trackingId) {
       const random = Math.floor(Math.random() * 10**12).toString().padStart(12, '0');
-      trackingId = `TCG-${random}`;
+      trackingId = `WO-${random}`;
     }
 
     // Check for duplicate tracking number
@@ -461,7 +461,7 @@ export const publicBookShipment = async (req, res, next) => {
     // Generate a unique tracking number
     const generateTracking = () => {
       const random = Math.floor(Math.random() * 10**12).toString().padStart(12, '0');
-      return `TCG-${random}`;
+      return `WO-${random}`;
     };
 
     let trackingId;
