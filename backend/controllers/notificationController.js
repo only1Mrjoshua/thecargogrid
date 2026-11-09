@@ -11,7 +11,7 @@ const buildEmailHtml = (notification) => {
     <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #1A1A2E;">
       <div style="background-color: #F8F9FD; padding: 30px; border-radius: 12px; border: 1px solid #E2E5F0;">
         <div style="text-align: center; margin-bottom: 25px;">
-          <img src="https://thecargogrid.com/logo.png" alt="The Cargo Grid" style="height: 50px;" />
+          <img src="https://westoceania.com/logo.png" alt="West Oceania" style="height: 50px;" />
           <h2 style="color: #2B0071; margin-top: 10px;">${subject}</h2>
         </div>
         <div style="background: white; padding: 25px; border-radius: 8px; border: 1px solid #E2E5F0;">
@@ -20,7 +20,7 @@ const buildEmailHtml = (notification) => {
           <p style="margin-top: 10px; font-size: 14px; color: #666;">Notification Type: ${type}</p>
         </div>
         <div style="margin-top: 20px; text-align: center; font-size: 12px; color: #999;">
-          <p>© ${new Date().getFullYear()} The Cargo Grid. All rights reserved.</p>
+          <p>© ${new Date().getFullYear()} West Oceania. All rights reserved.</p>
         </div>
       </div>
     </body>
