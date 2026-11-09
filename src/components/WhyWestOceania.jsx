@@ -79,7 +79,7 @@ function WhyWestOceania() {
           {/* Right: Content */}
           <div className="order-1 lg:order-2 space-y-6">
             <div className="reveal">
-              <span className="label-sm text-[#FF5500] font-semibold block mb-2">Why West Oceania</span>
+              <span className="label-sm text-[#FF5500] font-semibold block mb-2">Why West Oceania ?</span>
               <h2 id="why-heading" className="heading-section text-[#1A1A2E]">
                 More visibility. <br />
                 <span className="text-[#2B0071]">Less uncertainty.</span>
